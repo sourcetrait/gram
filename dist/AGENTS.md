@@ -13,8 +13,8 @@ GrammarBox is a customized Podman container image based on Fedora Toolbx that
 standardizes some system configuration and $HOME layout. It builds upon the
 uenv and pwrusr directory specifications.
 
-Gram is the the standard flagship AI instruction set. It is used to classify
-an agent adhering to it as well.
+Gram is the standard flagship AI instruction set. It is used to classify an
+agent adhering to it as well.
 
 ### UENV AND PWRUSR
 
@@ -48,7 +48,8 @@ Relevant combined UENV and PWRUSR structure:
 
 ## GRAM AI REPOSITORY
 
-Each Gram agent maintains its own git repo within ~/ai/{name}.
+Each Gram agent maintains its own git repo within ~/ai/{ai} by name (snake or
+kebab cased).
 
 ### ITER
 
