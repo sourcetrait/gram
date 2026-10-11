@@ -22,22 +22,28 @@ UEnv relies upon explicit XDG environment configuration.
 It uses ~/.sys for software internals and ~/.sys/of for internals that don't
 strictly adhere to XDG.
 
-Core combined UENV and PWRUSR structure:
+Relevant combined UENV and PWRUSR structure:
 ```
 ~/
  .config/ XDG_CONFIG_HOME
+ .ssh/key/ai/{ai}/ SSH keys
  .sys/
   cache/ XDG_CACHE_HOME
   data/ XDG_DATA_HOME
   state/ XDG_STATE_HOME
   of/
   srv/
-   git/ Git bare relays
-  local/ Installation
-  adhoc/ Manual installation
- ai/ AI Repositories
- proj/ First-party project repositories, remoted to ~/.sys/srv/git/..
- repo/ Third-party repositories (read-only)
+   git/{author}/{repo}/ Bare repositories for relay between host system and container
+  local/[bin etc lib libexec src opt doc share] Installation
+  adhoc/ Manual installation, same subdirs as local/
+  mnt/ User mounts; FUSE, net, etc
+ ai/{ai}/ AI Repository
+ proj/{author}/{repo}/ Eg, first-party project repository, remoted to ~/.sys/srv/git/..
+ repo/{provider}/{author}/{repo}/ Eg, Third-party repository (read-only)
+ tmp/ai/{ai}/ Scratch / temporary
+ down/ai/{ai}/ Downloads
+ bak/ai/{ai}/ Backups
+ data/ai/{ai}/ Heavy data / binaries repository (Git LFS and/or Rsync)
 ```
 
 ## GRAM AI REPOSITORY
