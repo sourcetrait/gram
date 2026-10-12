@@ -5,7 +5,6 @@
 ## GRAMMAR
 
 ### TERMINOLOGY
-
 SourceTrait Grammar is a framework & toolkit for AI agent instruction,
 organization, and operation.
 
@@ -16,11 +15,23 @@ uenv and pwrusr directory specifications.
 Gram is the standard flagship AI instruction set. It is used to classify an
 agent adhering to it as well.
 
-### UENV AND PWRUSR
+### REIN
+The concept of 'rein' serves to explicitly designate authority and
+resposibility between human and AI.
 
-UEnv relies upon explicit XDG environment configuration.
-It uses ~/.sys for software internals and ~/.sys/of for internals that don't
-strictly adhere to XDG.
+If something is under human rein, it is not to be mutated by AI and is to be
+adhered to.
+
+Where conflicts arise due to rein, stop and query the user.
+
+### ENV
+UENV standardizes explicit XDG environment configuration and establishes the
+basic cross-platform $HOME/.sys structure.
+
+PWRUSR extends UENV with more depth for interactive system users.
+
+~/.sys is the designated path for software internals.
+~/.sys/of is for internals that don't adhere well to XDG.
 
 Relevant combined UENV and PWRUSR structure:
 ```
@@ -87,12 +98,66 @@ Core structure is the same between iter and sub-iter:
  some/{thing}/ Miscellaneous, custom file structure
 ```
 
-#### SPECIAL ITERS
+#### SPECIAL ITER
 ```
 {ai_repo}/iter/
  self/ Maintenance of the AI repository itself
  none/ No iter selected during boot. Lacks state, docs, instructions, etc.
 ```
+
+#### PLAN
+Plan units are organized as a campaign.
+Campaigns are sub-divided into tasks.
+Tasks are sub-divided into sub-tasks until each leaf task clearly represents
+a single unit of work with its own verifiable goal.
+
+Campaigns are categorized within a scheduling pool.
+
+##### PLAN INDEX
+Maintained in `plan.yaml` for all pools.
+Markdown details of each campaign and task are in `plan/`.
+
+##### PLAN POOL
+Standard pools:
+- agenda Scheduled, Active
+- delay Scheduled, Inactive
+- debt Unscheduled; Recognized caveats with current agenda or implementation
+- maybe Unscheduled; Further analysis required
+
+##### PLAN STAGE
+In order:
+0. criteria Establishing intent and collecting acceptance requirements 
+1. plan Establishing implementation details
+2. implement Ready to work or work is in-progress
+3. test Verifying implementation via adhoc tests; Implementing and running any automated tests
+4. audit Ready for third-party acceptance review or that review is in-progress
+5. done
+
+#### INFO
+Chaptered documentation of current working knowledge concerning the
+topic / subtopic.
+
+Chapters are numbered.
+
+The `00_Reference.yaml` defines aliases to common referenes re-used throughout
+the documentation.
+
+### GRAM REF
+In the format of: {a:b:c},{a:b:c:N},{a:b::c},{alias}
+
+Components and aliases are snake_case.
+Numerics (N) can refer to lines, revisions, etc.
+`::` Indicates an inner content component
+
+Well-known components (some may be combined):
+- mem:{subject}
+- iter:{topic}:{subtopic}
+- info:{chapter}::{header}
+- journal:{rev}
+- quote:{name}
+- plan:{campaign}:{task}
+- op:seq:{sequence} op:proto:{protocol}
+- gov:{header}
 
 ### GENERIC BOOT
 Read fully and follow instructions, in order, conditionally:
