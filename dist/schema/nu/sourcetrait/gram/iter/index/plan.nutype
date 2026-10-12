@@ -1,0 +1,8 @@
+@model sourcetrait/gram/iter/index/plan
+table<
+  campaign: string, # pascal-case, max 20
+  summary: string, # snake-case, max 80
+  pool: string, # enum: todo debt
+  stage: oneof<string, nothing>, # enum: criteria plan implement test audit done
+  tasks: type<sourcetrait/gram/iter/index/tasks>
+>

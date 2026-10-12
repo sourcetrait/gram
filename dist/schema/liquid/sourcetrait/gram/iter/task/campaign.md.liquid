@@ -1,0 +1,6 @@
+# CAMPAIGN: {{campaign.name}} 
+{{campaign.details}}
+{% assign depth=2 %}
+{% for task in campaign.tasks %}
+{% render 'task', depth: depth, task: task %}
+{% endfor %}

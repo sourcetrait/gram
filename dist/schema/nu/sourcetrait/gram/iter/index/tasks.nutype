@@ -1,0 +1,7 @@
+@model sourcetrait/gram/iter/index/tasks
+table<
+  task: string, # pascal-case, max 20
+  summary: string, # max 80
+  stage: string, # enum: criteria plan implement test audit done
+  tasks: type<self>
+>

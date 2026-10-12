@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tasking",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "$ref": "#/$defs/todoCampaign"
+      },
+      {
+        "$ref": "#/$defs/debtCampaign"
+      }
+    ]
+  },
+  "$defs": {
+    "todoCampaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "campaign",
+        "summary",
+        "pool",
+        "stage"
+      ],
+      "properties": {
+        "campaign": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "pool": {
+          "const": "todo"
+        },
+        "stage": {
+          "enum": [
+            "criteria",
+            "plan",
+            "implement",
+            "test",
+            "review",
+            "deploy",
+            "done"
+          ]
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    },
+    "debtCampaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "campaign",
+        "summary",
+        "pool"
+      ],
+      "properties": {
+        "campaign": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "pool": {
+          "const": "debt"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task",
+        "summary",
+        "stage"
+      ],
+      "properties": {
+        "task": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "criteria",
+            "plan",
+            "implement",
+            "test",
+            "audit",
+            "done"
+          ]
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    }
+  }
+}

@@ -62,15 +62,15 @@ Core structure is the same between iter and sub-iter:
 ```
 {ai_repo}/[iter/{topic}/ iter/{topic}/sub/{subtopic}/]
  boot.md Specific instructions per iter / subiter
- task.yaml Index of campaigns and their tasks
- task/{pool}/{CampaignName}.md Campaign details
- how.yaml Index of system operation HOWTOs
- how/{OperationName}.md Operational details
+ plan.yaml Index of campaigns, their tasks and sub-tasks
+ plan/{pool}/[{CampaignName}.md {CampaignName}/{TaskName}.md {CampaignName}/{TaskName}/{SubTaskName}.md {CampaignName}/{TaskName}/{SubTaskName}/..] Campaign details, its tasks, sub-tasks follow suite
+ op.yaml Index of operational protocols and instruction sequences
+ op/[{ProtocolName}.md {SequenceName}.md] Protocol and Sequence details
  journal.yaml Index of changes to iter / subiter, by revision
  journal/{rev}.md Journal per revision
  quote.yaml Index of references to the User's quotations, for justification
  quote/{QuoteName}.md Specific User quote
- doc/ Current working knowledge, separated by chapter ({NN_ChapterName.md})
+ info/ Current working knowledge, separated by chapter ({NN_ChapterName.md})
    00_Index.yaml Index of aliased references, chapters, chapter sections
  state/ References to journal entries that establish sum of operational state
   last.yaml Previous
@@ -78,13 +78,11 @@ Core structure is the same between iter and sub-iter:
   next.yaml Planned, not started
  tool/ Custom tooling
   nu/[bin mod] Nushell tooling, standalone and module
- old/ Historical reference
-  task/{pool}/{CampaignName}.[yaml md] Completed or cancelled campaigns
+ old/ Historical reference, no longer current
+  plan/{pool}/[{CampaignName}.[yaml md] {CampaignName}/..} Completed or cancelled campaigns
   journal/{rev_first}-{rev_last}.[yaml md] Archived journal entries by revision
-  state/{rev}.yaml Archived previous
-  how/how.yaml Index of archived operational HOWTOs
-  how/{OperationName}.md Archived operational details
-  quote/quote.yaml Index of archived user quotes
+  state/{rev}.yaml Archived previous state
+  op/[{ProtocolName}.[yaml md] {SequenceName}.[yaml md]] Archived operational protocols and sequences
   quote/{QuoteName}.md Archived user quotes
  some/{thing}/ Miscellaneous, custom file structure
 ```
@@ -109,10 +107,17 @@ Read fully and follow instructions, in order, conditionally:
 {ai_repo}/dist/ contains a copy of the template used to create the Gram AI repo.
 
 #### DIST SCHEMA
-Contains schemas used to validate:
+Contains schemas used to validate.
+
+YAML indices and corresponding Markdown:
 ```
 {ai_repo}/dist/schema/
- yaml/iter/ YAML files such as how.yaml, state/now.yaml, etc.
+ yaml/sourcetrait/gram/
+  iter/ YAML schemas for plan.yaml, state/now.yaml, etc
+ nu/sourcetrait/gram/iter/
+  index/ Corresponding Nu types for plan.yaml, state/now.yaml, etc
+ md/sourcetrait/gram/
+  iter/ Corresponding details Markdown templates (liquid) for plan.yaml, state/now.yaml, etc
 ```
 
 >END GOV
