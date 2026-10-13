@@ -57,6 +57,16 @@ Relevant combined UENV and PWRUSR structure:
  data/ai/{ai}/ Heavy data / binaries repository (Git LFS and/or Rsync)
 ```
 
+### STRING
+PascalCase is used for naming concepts, tasks, etc. At least two words are
+necessary.
+
+snake_case is used for tokens, paths, variables, functions, etc.
+
+Snake_Title-Case is used for documentation filenames.
+
+Fields acting as a summary are 80 characters max without a period at the end.
+
 ## GRAM AI REPOSITORY
 
 Each Gram agent maintains its own git repo within ~/ai/{ai} by name (snake or
@@ -74,7 +84,7 @@ Core structure is the same between iter and sub-iter:
 {ai_repo}/[iter/{topic}/ iter/{topic}/sub/{subtopic}/]
  boot.md Specific instructions per iter / subiter
  plan.yaml Index of campaigns, their tasks and sub-tasks
- plan/{pool}/[{CampaignName}.md {CampaignName}/{TaskName}.md {CampaignName}/{TaskName}/{SubTaskName}.md {CampaignName}/{TaskName}/{SubTaskName}/..] Campaign details, its tasks, sub-tasks follow suite
+ plan/{pool}/[{CampaignName}.md {CampaignName}/{TaskName}.md] Campaign details and its tasks
  op.yaml Index of operational protocols and instruction sequences
  op/[{ProtocolName}.md {SequenceName}.md] Protocol and Sequence details
  journal.yaml Index of changes to iter / subiter, by revision
@@ -82,7 +92,7 @@ Core structure is the same between iter and sub-iter:
  quote.yaml Index of references to the User's quotations, for justification
  quote/{QuoteName}.md Specific User quote
  info/ Current working knowledge, separated by chapter ({NN_ChapterName.md})
-   00_Index.yaml Index of aliased references, chapters, chapter sections
+   00_Reference.yaml Index of aliased references
  state/ References to journal entries that establish sum of operational state
   last.yaml Previous
   now.yaml Current, in flight
@@ -108,9 +118,6 @@ Core structure is the same between iter and sub-iter:
 #### PLAN
 Plan units are organized as a campaign.
 Campaigns are sub-divided into tasks.
-Tasks are sub-divided into sub-tasks until each leaf task clearly represents
-a single unit of work with its own verifiable goal.
-
 Campaigns are categorized within a scheduling pool.
 
 ##### PLAN INDEX
@@ -183,6 +190,63 @@ YAML indices and corresponding Markdown:
   index/ Corresponding Nu types for plan.yaml, state/now.yaml, etc
  md/sourcetrait/gram/
   iter/ Corresponding details Markdown templates (liquid) for plan.yaml, state/now.yaml, etc
+```
+
+## APPENDIX
+
+### EXAMPLE: plan.yaml
+```yaml
+- campaign: SomeExample
+  summary: This is a summary
+  pool: agenda
+  stage: implement
+  tasks:
+  - task: ExampleTaskOne
+    summary: This is another summary
+    stage: test
+  - task: ExampleTaskTwo
+    summary: This is yet another summary
+    stage: implement
+- campaign: AnotherExample
+  summary: Consider something for later
+  pool: maybe
+  stage: criteria
+```
+
+### EXAMPLE: op.yaml
+```yaml
+- sequence: SomeSequence
+  summary: This is a summary
+- protocol: SomeProtocol
+  summary: This is another summary
+  apply:
+  - on: Before performing a git commit
+  - on: Code review
+```
+
+### EXAMPLE: quote.yaml
+```yaml
+- quote: SomeJustification
+- quote: SomeOtherPhrase
+```
+
+### EXAMPLE: state/[next now last].yaml
+```yaml
+rev: 32
+ptr: {journal:32}
+refs:
+- ref: {journal:31}
+- ref: {info:know_your_role::roles}
+```
+
+### EXAMPLE: 00_Reference.yaml
+```yaml
+- ref: some_alias
+  ptr: {iter:other:info:know_your_role::roles}
+- ref: some_src
+  file: ~/proj/my-project/src/foo.rs
+- ref: some_site
+  url: https://foo.tld/bar.html
 ```
 
 >END GOV
