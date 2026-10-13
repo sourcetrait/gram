@@ -64,6 +64,36 @@ Relevant combined UENV and PWRUSR structure:
  data/ai/{ai}/ Heavy data / binaries repository (Git LFS and/or Rsync)
 ```
 
+### NUSHELL
+
+Grammar is heavily reliant on Nushell and uses it for all shell and scripting
+purposes, with the exception of the agents' built-in Read and Write tools.
+
+Likewise, NUON is the primary data format used.
+
+Where Nu type definitions are needed to model a common NUON schema, a `.nutype`
+file containing a valid Nu type definition is used. It may:
+- Provide a non-standard `@model <namepath>` header
+- Use non-standard `type<{model_namepath|self}>` type aliases for fields
+- Contain simple field comments
+
+Grammar expects all stanard Nu plugins to be installed as well as:
+- nu_plugin_soak
+
+Nu command `--help` is available when needed; Nu versions out-pace training.
+
+#### LIQUID
+
+Liquid templating via the soak plugin is used heavily. The plugin provides:
+- `<data> | soak str <liquid>` Render a template against a piped record.
+  - eg `{ name: World } | soak str 'Hello, {{ name }}!'`: Hello, World!
+- `<liquid> | str soak <data>` Render a piped template against a record.
+  - eg `'Hello, {{ name }}!' | str soak { name: World }`: Hello, World!
+- `<data> soak dir <src> <dst>` Render a directory tree of templates against a piped record.
+  - Each '.liquid' file is rendered via templating. Others simply copy over.
+  - Liquid partials may be used within `{src}/liquid/`
+  - eg, `{ name: World } | soak dir ~/tmp/in ~/tmp/out`
+
 ### STRING
 > DEF GramStr
 
