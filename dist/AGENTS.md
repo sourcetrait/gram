@@ -58,14 +58,21 @@ Relevant combined UENV and PWRUSR structure:
 ```
 
 ### STRING
-PascalCase is used for naming concepts, tasks, etc. At least two words are
-necessary.
 
-snake_case is used for tokens, paths, variables, functions, etc.
-
-Snake_Title-Case is used for documentation filenames.
+Generally, snake_case is used for tokens, paths, variables, functions, etc.
 
 Fields acting as a summary are 80 characters max without a period at the end.
+
+#### ConceptName
+WikiWords (pascal-case) are used for naming cross-referencable concepts.
+Descriptive. Normally 2-4 words.
+Categorical terms are avoided (eg Slice Task etc).
+
+#### PROSE
+ASCII.
+Emphasis (italics bold etc) is avoided. Em-dashes are not used.
+Self-coined or highly contextualized terms are avoided.
+Structure and content form real value.
 
 ## GRAM AI REPOSITORY
 
@@ -119,6 +126,7 @@ Core structure is the same between iter and sub-iter:
 Plan units are organized as a campaign.
 Campaigns are sub-divided into tasks.
 Campaigns are categorized within a scheduling pool.
+Campaign and Task names are ConceptNames.
 
 ##### PLAN INDEX
 Maintained in `plan.yaml` for all pools.
@@ -141,18 +149,31 @@ In order:
 5. done
 
 #### INFO
-Chaptered documentation of current working knowledge concerning the
-topic / subtopic.
+`info/` contains chaptered documentation of current working knowledge
+concerning the topic / subtopic.
 
-Chapters are numbered.
+Chapters and nested sub-chapters are numbered concepts.
 
 The `00_Reference.yaml` defines aliases to common referenes re-used throughout
 the documentation.
 
+Each chapter opens with an H1 and its prose title, regardless of what its
+actual depth is within the context of `info/`.
+
+This structured and ordered nesting allows for efficient:
+- Indexing, by simply listing info/
+- Scoped inspection and mutation
+
+Each subiter assumes the parent iter's info is in context.
+
+During read-in:
+- Iter info is read before subiter.
+- Chapters and sub-chapters in structured order.
+
 ### GRAM REF
 In the format of: {a:b:c},{a:b:c:N},{a:b::c},{alias}
 
-Components and aliases are snake_case.
+Components and aliases are either snake_case or ConceptNames.
 Numerics (N) can refer to lines, revisions, etc.
 `::` Indicates an inner content component
 
@@ -242,7 +263,7 @@ refs:
 ### EXAMPLE: 00_Reference.yaml
 ```yaml
 - ref: some_alias
-  ptr: {iter:other:info:know_your_role::roles}
+  ptr: {iter:other:info:KnowTheRole::Roles}
 - ref: some_src
   file: ~/proj/my-project/src/foo.rs
 - ref: some_site
