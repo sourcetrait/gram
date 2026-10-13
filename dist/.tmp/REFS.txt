@@ -1,0 +1,31 @@
+{SCHEMA:..}
+
+raw schemas:
+{file:FILEPATH}
+{url:URL}
+
+design:
+{info:jab/study/game:DoSomething/Something/Something#32-42,33-44}
+{info:jab/study/game:DoSomething/Something/Something:SomeThing:Something#32-42,33-44}
+{mem:Something/Something/Something:Something:Something}
+{proj:grammar/mcp:donkey/foo.rs#32}
+{proj:grammar/mcp::error::foo_bar_car#32}
+{proj:grammar/mcp::error/foo_bar_car#32}
+{proj:grammar/mcp::util.error.foo_bar_car#32}
+{proj:grammar/mcp:donkey/foo.S:JAB_DISPLAY}
+
+location components:
+- NAME/PATH
+- DOT.WALK
+- MOD::PATH
+
+tail components (?):
+- #LINES
+- :ITEM
+
+global:
+{mem:CONCEPT_NAMEPATH?}
+
+iter (concept tree):
+{info:ITER_NAMEPATH:CONCEPT_NAMEPATH?}
+{task:ITER_NAMEPATH:CONCEPT_NAMEPATH?}
