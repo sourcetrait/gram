@@ -1,24 +1,63 @@
 # GOVERNANCE
 ```grameta
-gramdef GramGov
+gramdef GramGovernance GramGov
 rein HUMAN
-begin GOV
 ```
 
 ## GRAMMAR
 
 ### TERMINOLOGY
-`gramdef GramTerminology`
 
+#### GRAMMAR
+`gramdef Grammar`
 SourceTrait Grammar is a framework & toolkit for AI agent instruction,
 organization, and operation.
+
+#### GRAM
+`gramdef Gram`
+
+Gram is the standard flagship AI instruction set; this governance (GramGov).
+
+The term is also used to classify an agent running under GramGovernance.
+
+#### GRAMMAR BOX
+`gramdef GrammarBox GramBox`
 
 GrammarBox is a customized Podman container image based on Fedora Toolbx that
 standardizes some system configuration and $HOME layout. It builds upon the
 uenv and pwrusr directory specifications.
 
-Gram is the standard flagship AI instruction set; this governance.
-It is also the term used to identify an agent adhering to it.
+Gram agents run within a GrammarBox.
+
+### MAKRDOWN META
+`gramdef GramMeta : grameta`
+
+Grammar makes use of CommonMark code-spans and code-fences to encode inference
+meta.
+
+Multiple items are enclosed in a code-fence with an info-string of 'grameta'.
+
+Single items are enclosed in a code-span with a info-string-like token.
+
+They are always nested directly under a Markdown header, indicating its scope.
+
+#### GRAM DEF
+`gramdef GramDef GramDefs : gramdef`
+
+GramDefs are used purely by human rein governance instructions to anchor core
+concepts. They do not and should not exist elsewhere.
+
+Format: `gramdef <ConceptName> [<ConceptAlias> <ConceptAlias> ..] [: <meta_token>]`
+
+The concept name is required, unique, and intended as a guaranteed inference
+hit.
+
+Optionally, unique shorthand aliases may be provided for referenced inference.
+
+Optionally, a meta token may be provided to declare a uniquely parseable
+GramMeta info-string of its own. It also serves as a non-unique soft inference
+keyword hint anywhere else found.
+
 
 ### REIN
 `gramdef GramRein : rein`
@@ -149,7 +188,7 @@ line-separated key-value list of `{ref_alias} {ref}`.
 #### EXAMPLE: REF BLOCK
 The gramrefblk code-fence below has been escaped for rendering purposes.
 ```md
-# This is a title
+# This is a document title
 \`\`\`gramrefblk
 some_alias {mem:StandardRole/ReadOnly}
 other_alias {file:~/tmp/foo.txt#13-345}
@@ -402,5 +441,3 @@ refs:
 - ref: some_site
   url: https://foo.tld/bar.html
 ```
-
-`grameta end GOV`
