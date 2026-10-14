@@ -1,12 +1,12 @@
 # GOVERNANCE
 > REIN HUMAN
-> DEF GramGov
+`gramdef GramGov`
 > BEGIN GOV
 
 ## GRAMMAR
 
 ### TERMINOLOGY
-```gramdef GramTerminology```
+`gramdef GramTerminology`
 
 SourceTrait Grammar is a framework & toolkit for AI agent instruction,
 organization, and operation.
@@ -19,7 +19,7 @@ Gram is the standard flagship AI instruction set; this governance.
 It is also the term used to identify an agent adhering to it.
 
 ### REIN
-> DEF GramRein
+`gramdef GramRein`
 
 The concept of rein serves to explicitly designate authority and
 resposibility between human and AI.
@@ -30,7 +30,7 @@ adhered to.
 Where conflicts arise due to rein, stop and query the user.
 
 ### ENV
-> DEF GramEnv
+`gramdef GramEnv`
 
 UENV standardizes explicit XDG environment configuration and establishes the
 basic cross-platform $HOME/.sys structure.
@@ -95,7 +95,7 @@ Liquid templating via the soak plugin is used heavily. The plugin provides:
   - eg, `{ name: World } | soak dir ~/tmp/in ~/tmp/out`
 
 ### STRING
-> DEF GramStr
+`gramdef GramStr`
 
 ASCII.
 Emphasis (italics bold etc) is avoided. Em-dashes are not used.
@@ -107,7 +107,7 @@ Generally, snake_case is used for tokens, paths, variables, functions, etc.
 Fields acting as a summary are 80 characters max without a period at the end.
 
 ### CONCEPT NAME
-> DEF ConceptName ConceptNames ConceptNamed
+`gramdef ConceptName ConceptNames ConceptNamed`
 
 WikiWords are used for naming cross-referencable concepts.
 Descriptive. Normally 2-4 words.
@@ -115,7 +115,7 @@ Categorical terms are avoided (eg Slice Task etc).
 
 
 ### GRAM REF
-> DEF GramRef GramRefs
+`gramdef GramRef GramRefs`
 
 In the format of: {a:b:c},{a:b:c:N},{a:b::c},{alias}
 
@@ -134,7 +134,7 @@ Well-known components (some may be combined, using '::'):
 - gov:{header}
 
 ### REF BLOCK
-> DEF GramRefBlock RefBlock
+`gramdef GramRefBlock RefBlock`
 
 Markdown files that make use of specific GramRefs more than once use a RefBlock
 to efficiently re-use them.
@@ -159,10 +159,8 @@ some_alias {mem:KnowTheRole}
 other_alias {file:~/tmp/foo.txt:13-345}
 ```
 
-
-
 ### CONCEPT TREE
-> DEF GramConceptTree ConceptTree
+`gramdef GramConceptTree ConceptTree`
 
 Grammar concept trees are a re-usable pattern for nested conceptualization that
 standardizes directory and file structure along with GramRef use.
@@ -192,13 +190,13 @@ that under a GramRefBlock directly under the H1.
 
 
 ## GRAM AI REPOSITORY
-> DEF GramRepo AiRepo
+`gramdef GramRepo AiRepo`
 
 Each Gram agent maintains its own git repo within ~/ai/{ai} by name (snake or
 kebab cased).
 
 ### ITER
-> DEF GramIter
+`gramdef GramIter`
 
 Topic-specific knowledge and instruction is maintained iteratively within
 {ai_repo}/iter/{topic}.
@@ -235,7 +233,7 @@ Core structure is the same between iter and sub-iter:
 ```
 
 #### SPECIAL ITER
-> DEF GramSpecialIter GramSpecialIters
+`gramdef GramSpecialIter GramSpecialIters`
 
 ```
 {ai_repo}/iter/
@@ -244,7 +242,7 @@ Core structure is the same between iter and sub-iter:
 ```
 
 #### PLAN
-> DEF GramPlan
+`gramdef GramPlan`
 
 Plan units are organized as a campaign.
 Campaigns are sub-divided into tasks.
@@ -252,7 +250,7 @@ Campaigns are categorized within a scheduling pool.
 Campaign and Task names are ConceptNames.
 
 ##### PLAN INDEX
-> DEF GramPlanIndex
+`gramdef GramPlanIndex`
 
 Maintained in `plan.yaml` for all pools.
 Markdown details of each campaign and task are in `plan/`.
@@ -277,7 +275,7 @@ Markdown details of each campaign and task are in `plan/`.
 ```
 
 ##### PLAN POOL
-> DEF GramPlanPool
+`gramdef GramPlanPool`
 
 Standard pools:
 - agenda Scheduled, Active
@@ -286,7 +284,7 @@ Standard pools:
 - maybe Unscheduled; Further analysis required
 
 ##### PLAN STAGE
-> DEF GramPlanStage
+`gramdef GramPlanStage`
 
 In order:
 0. criteria Establishing intent and collecting acceptance requirements 
@@ -298,7 +296,7 @@ In order:
 
 
 #### INFO
-> DEF GramInfo
+`gramdef GramInfo`
 
 `info/` contains chaptered documentation of current working knowledge
 concerning the topic / subtopic.
@@ -331,7 +329,7 @@ In the formats of:
 
 
 ### GENERIC BOOT
-> DEF GramBoot
+`gramdef GramBoot`
 
 Read fully and follow instructions, in order, conditionally:
 ```
@@ -342,12 +340,12 @@ Read fully and follow instructions, in order, conditionally:
 ```
 
 ### DIST
-> DEF GramDist
+`gramdef GramDist`
 
 {ai_repo}/dist/ contains a copy of the template used to create the Gram AI repo.
 
 #### DIST SCHEMA
-> DEF GramDistSchema
+`gramdef GramDistSchema`
 
 Contains schemas used to validate.
 
