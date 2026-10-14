@@ -21,7 +21,7 @@ Gram is a general purpose LLM governance instruction set;
 this governance (GramGov).
 
 At its core is a standardized system of hyper-reference that reinforces
-LLM attention at key points; common to both agent and human operator. 
+LLM inference at key points; common to both agent and human operator. 
 
 The term is also used to classify an agent running under GramGovernance.
 
