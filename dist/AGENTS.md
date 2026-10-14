@@ -21,7 +21,7 @@ Gram is the standard flagship AI instruction set; this governance.
 It is also the term used to identify an agent adhering to it.
 
 ### REIN
-`gramdef GramRein`
+`gramdef GramRein : rein`
 
 The concept of rein serves to explicitly designate authority and
 resposibility between human and AI.
@@ -117,7 +117,7 @@ Categorical terms are avoided (eg Slice Task etc).
 
 
 ### GRAM REF
-`gramdef GramRef GramRefs`
+`gramdef GramRef GramRefs : gramref`
 
 In the format of: {a:b:c},{a:b:c:N},{a:b::c},{alias}
 
@@ -136,17 +136,24 @@ Well-known components (some may be combined, using '::'):
 - gov:{header}
 
 ### REF BLOCK
-`gramdef GramRefBlock RefBlock`
+`gramdef GramRefBlock GramRefBlk RefBlock : gramrefblk`
 
-Markdown files that make use of specific GramRefs more than once use a RefBlock
-to efficiently re-use them.
+Markdown files that make use of specific GramRefs more than once use a
+GramRefBlock to efficiently re-use them.
 
-An H2 titled 'REF' is appended to the end of the file.
-Directly under the H2 is a line-separated KV list of `{ref_alias} {ref}`.
+A code-fence is inserted directly below the document's title (first) H1, with
+an info-string of 'gramrefblk'. The code-fence content consists of a
+line-separated key-value list of `{ref_alias} {ref}`.
+
 
 #### EXAMPLE: REF BLOCK
+The gramrefblk code-fence below has been escaped for rendering purposes.
 ```md
 # This is a title
+\`\`\`gramrefblk
+some_alias {mem:StandardRole/ReadOnly}
+other_alias {file:~/tmp/foo.txt#13-345}
+\`\`\`
 
 Related ({some_alias}) and direct {other_alias}.
 
@@ -155,10 +162,6 @@ Single mention ({iter:foo:bar::journal:13}).
 ## Other title
 
 Direct {other_alias} and related ({some_alias})
-
-## REF
-some_alias {mem:KnowTheRole}
-other_alias {file:~/tmp/foo.txt:13-345}
 ```
 
 ### CONCEPT TREE
@@ -400,4 +403,4 @@ refs:
   url: https://foo.tld/bar.html
 ```
 
-> END GOV
+`grameta end GOV`
