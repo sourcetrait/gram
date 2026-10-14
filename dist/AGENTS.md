@@ -1,7 +1,9 @@
 # GOVERNANCE
-> REIN HUMAN
-`gramdef GramGov`
-> BEGIN GOV
+```grameta
+gramdef GramGov
+rein HUMAN
+begin GOV
+```
 
 ## GRAMMAR
 
