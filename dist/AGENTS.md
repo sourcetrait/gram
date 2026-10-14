@@ -10,6 +10,7 @@ rein HUMAN
 
 #### GRAMMAR
 `gramdef Grammar`
+
 SourceTrait Grammar is a framework & toolkit for AI agent instruction,
 organization, and operation.
 
