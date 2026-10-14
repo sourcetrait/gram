@@ -6,7 +6,7 @@
 ## GRAMMAR
 
 ### TERMINOLOGY
-> DEF GramTerminology
+```gramdef GramTerminology```
 
 SourceTrait Grammar is a framework & toolkit for AI agent instruction,
 organization, and operation.
