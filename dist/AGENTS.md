@@ -257,7 +257,7 @@ Core structure is the same between iter and sub-iter:
 {ai_repo}/[iter/{topic}/ iter/{topic}/sub/{subtopic}/]
  boot.md Specific instructions per iter / subiter
  plan.yaml Index of campaigns, their tasks and sub-tasks
- plan/{pool}/[{CampaignName}.md {CampaignName}/{TaskName}.md] Campaign details and its tasks
+ plan/{pool}/[{CampaignName}.md {CampaignName}/{TaskName}.md {CampaignName}/{TaskName}/{SubTask}.md ..] Campaign details and nested task details
  op.yaml Index of operational protocols and instruction sequences
  op/[{ProtocolName}.md {SequenceName}.md] Protocol and Sequence details
  journal.yaml Index of changes to iter / subiter, by revision
@@ -293,10 +293,23 @@ Core structure is the same between iter and sub-iter:
 #### PLAN
 `gramdef GramPlan`
 
-Plan units are organized as a campaign.
-Campaigns are sub-divided into tasks.
+Plans are organized as Campaigns.
+Campaigns are sub-divided into nested tasks.
 Campaigns are categorized within a scheduling pool.
 Campaign and Task names are ConceptNames.
+Campaigns are essentially a manifest of top-level tasks.
+Tasks represent branches or leaves (units) of work.
+
+Campaign and Task details establish at the appropriate level:
+- Context
+- Goals
+- Detailed resolution steps
+- Completion acceptance criteria
+
+Tasks may be nested as deep as necessary for proper organization.
+
+A campaign and its tasks' details are maintained as a GramConceptTree within
+the iter's `task/{pool}/` dir.
 
 ##### PLAN INDEX
 `gramdef GramPlanIndex`
@@ -307,16 +320,17 @@ Markdown details of each campaign and task are in `plan/`.
 ###### EXAMPLE: plan.yaml
 ```yaml
 - campaign: SomeExample
-  summary: This is a summary
+  summary: This is a whole plan overview
   pool: agenda
   stage: implement
   tasks:
   - task: ExampleTaskOne
-    summary: This is another summary
-    stage: test
-  - task: ExampleTaskTwo
-    summary: This is yet another summary
+    summary: This is categorical
     stage: implement
+    tasks:
+    - task: ExampleTaskTwo
+      summary: This is an actual unit of work
+      stage: test
 - campaign: AnotherExample
   summary: Consider something for later
   pool: maybe
@@ -336,12 +350,12 @@ Standard pools:
 `gramdef GramPlanStage`
 
 In order:
-0. criteria Establishing intent and collecting acceptance requirements 
-1. plan Establishing implementation details
-2. implement Ready to work or work is in-progress
-3. test Verifying implementation via adhoc tests; Implementing and running any automated tests
-4. audit Ready for third-party acceptance review or that review is in-progress
-5. done
+1. criteria Establishing intent and collecting acceptance requirements 
+2. plan Establishing implementation details
+3. implement Ready to work or work is in-progress
+4. test Verifying implementation via adhoc tests; Implementing and running any automated tests
+5. audit Ready for third-party acceptance review or that review is in-progress
+6. done
 
 
 #### INFO
