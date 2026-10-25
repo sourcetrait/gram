@@ -1,4 +1,4 @@
-# gram/indexed/mod.nu
+# lib/indexed/mod.nu
 
 ## entries
 

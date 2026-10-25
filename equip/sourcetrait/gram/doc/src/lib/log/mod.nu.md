@@ -1,4 +1,4 @@
-# gram/log/mod.nu
+# lib/log/mod.nu
 
 `common` and `repo` are imported by relative paths, which nushell resolves
 against the importing file, so they are found wherever gram is loaded from.

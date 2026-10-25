@@ -1,4 +1,4 @@
-# gram/repo/mod.nu
+# lib/repo/mod.nu
 
 ## repo_dir
 

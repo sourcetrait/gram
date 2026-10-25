@@ -1,4 +1,4 @@
-# gram/sequence/mod.nu
+# lib/sequence/mod.nu
 
 ## main
 

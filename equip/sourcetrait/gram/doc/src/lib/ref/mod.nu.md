@@ -1,4 +1,4 @@
-# gram/ref/mod.nu
+# lib/ref/mod.nu
 
 ## ref_filepath
 

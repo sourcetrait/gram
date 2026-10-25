@@ -1,4 +1,4 @@
-# gram/protocol/mod.nu
+# lib/protocol/mod.nu
 
 ## main
 

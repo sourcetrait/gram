@@ -1,4 +1,4 @@
-# gram/plan/mod.nu
+# lib/plan/mod.nu
 
 ## campaign
 

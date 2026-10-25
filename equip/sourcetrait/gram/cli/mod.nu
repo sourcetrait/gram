@@ -25,7 +25,7 @@ export def log []: nothing -> string {
 export def "log last" [
     iter: string
 ]: nothing -> record<rev: int, summary: string, file: path> {
-    use ../../../lib/sourcetrait/gram/log
+    use ../lib/log
     log latest $iter
 }
 
@@ -39,7 +39,7 @@ export def "log rev" [
         table<rev: int, summary: string, file: path>
     >
 ] {
-    use ../../../lib/sourcetrait/gram/log
+    use ../lib/log
     log rev $iter $rev
 }
 
@@ -48,7 +48,7 @@ export def "log new" [
     iter: string
     summary: string
 ]: nothing -> record<rev: int, summary: string, file: path> {
-    use ./mod/gram/log
+    use ../lib/log
     log new $iter $summary
 }
 
@@ -56,7 +56,7 @@ export def "log new" [
 export def "log prune" [
     iter: string
 ]: nothing -> record<kept: int, moved: int, shards: list<path>> {
-    use ./mod/gram/log
+    use ../lib/log
     log prune $iter
 }
 
@@ -75,7 +75,7 @@ export def ref [
         >
     >
 ] {
-    use ./mod/gram/ref
+    use ../lib/ref
     ref resolve (ref braced $ref)
 }
 
@@ -89,7 +89,7 @@ export def sequence [
         table<name: string, summary: string, file: path>
     >
 ] {
-    use ./mod/gram/sequence
+    use ../lib/sequence
     sequence $iter $sequence
 }
 
@@ -107,7 +107,7 @@ export def protocol [
         >
     >
 ] {
-    use ./mod/gram/protocol
+    use ../lib/protocol
     protocol $iter $protocol
 }
 
@@ -126,7 +126,7 @@ export def "plan campaign" [
         tasks: table<task: string, summary: string>, file: path
     >
 ] {
-    use ./mod/gram/plan
+    use ../lib/plan
     plan campaign $iter $campaign
 }
 
@@ -141,7 +141,7 @@ export def "plan task" [
         file: oneof<nothing, path>
     >
 ] {
-    use ./mod/gram/plan
+    use ../lib/plan
     plan task $iter $task
 }
 
@@ -162,7 +162,7 @@ export def "plan new campaign" [
         tasks: table<task: string, summary: string>, file: path
     >
 ] {
-    use ./mod/gram/plan
+    use ../lib/plan
     plan new campaign $iter $pool $campaign $summary
 }
 
@@ -178,7 +178,7 @@ export def "plan new task" [
         file: oneof<nothing, path>
     >
 ] {
-    use ./mod/gram/plan
+    use ../lib/plan
     plan new task $iter $task $summary
 }
 
@@ -195,7 +195,7 @@ export def "state now" [
         rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
     >
 ] {
-    use ./mod/gram/state
+    use ../lib/state
     state now $iter
 }
 
@@ -207,7 +207,7 @@ export def "state next" [
         rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
     >
 ] {
-    use ./mod/gram/state
+    use ../lib/state
     state next $iter
 }
 
@@ -219,7 +219,7 @@ export def "state last" [
         rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
     >
 ] {
-    use ./mod/gram/state
+    use ../lib/state
     state latest $iter
 }
 
@@ -228,8 +228,8 @@ export def "state roll" [
     iter: string
     ptr: string
 ]: nothing -> int {
-    use ./mod/gram/ref
-    use ./mod/gram/state
+    use ../lib/ref
+    use ../lib/state
     state advance $iter (ref braced $ptr)
 }
 
@@ -237,7 +237,7 @@ export def "state roll" [
 export def "state fresh" [
     iter: string
 ]: nothing -> int {
-    use ./mod/gram/state
+    use ../lib/state
     state fresh $iter
 }
 
@@ -257,6 +257,6 @@ export def states [
         >
     >
 ] {
-    use ./mod/gram/state
+    use ../lib/state
     state states $iter
 }

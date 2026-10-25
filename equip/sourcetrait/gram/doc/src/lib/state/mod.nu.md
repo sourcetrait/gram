@@ -1,4 +1,4 @@
-# gram/state/mod.nu
+# lib/state/mod.nu
 
 ## now, next, latest, and states
 

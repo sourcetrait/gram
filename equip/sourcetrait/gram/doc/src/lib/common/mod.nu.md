@@ -1,4 +1,4 @@
-# gram/common/mod.nu
+# lib/common/mod.nu
 
 ## read_index
 
