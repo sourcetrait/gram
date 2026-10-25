@@ -187,7 +187,7 @@ GramRefBlock to efficiently re-use them.
 
 A code-fence is inserted directly below the document's title (first) H1, with
 an info-string of 'gramrefblk'. The code-fence content consists of a
-line-separated key-value list of `{ref_alias} {ref}`.
+line-separated key-value list of `{ref} {ref_alias}`.
 
 
 #### EXAMPLE: REF BLOCK
@@ -195,8 +195,8 @@ The gramrefblk code-fence below has been escaped for rendering purposes.
 ```md
 # This is a document title
 \`\`\`gramrefblk
-some_alias {mem:StandardRole/ReadOnly}
-other_alias {file:~/tmp/foo.txt#13-345}
+{mem:StandardRole/ReadOnly} {some_alias}
+{file:~/tmp/foo.txt#13-345} {other_alias}
 \`\`\`
 
 Related ({some_alias}) and direct {other_alias}.
@@ -217,18 +217,15 @@ standardizes directory and file structure along with GramRef use.
 Directory structure:
 ```
 {concept_dir}/
- NN_{ConceptOne}.md
- NN_{ConceptOne}/
-  NN_{SubConceptOne}.md
-  NN_{SubConceptTwo}
-   NN_{SubConceptThree}.md
+ {ConceptOne}.md
+ {ConceptOne}/
+  {SubConceptOne}.md
+  {SubConceptTwo}
+   {SubConceptThree}.md
    ..
- NN_{ConceptTwo}.md
+ {ConceptTwo}.md
  ..
 ```
-
-File and directory names are ConceptNamed and are numerically ordered (NN),
-zero-padded.
 
 Regardless of depth, each markdown file opens with an H1 using a prose title
 that correlates with its ConceptName.
@@ -309,7 +306,7 @@ Campaign and Task details establish at the appropriate level:
 Tasks may be nested as deep as necessary for proper organization.
 
 A campaign and its tasks' details are maintained as a GramConceptTree within
-the iter's `task/{pool}/` dir.
+the iter's `plan/{pool}/` dir.
 
 ##### PLAN INDEX
 `gramdef GramPlanIndex`
@@ -342,9 +339,10 @@ Markdown details of each campaign and task are in `plan/`.
 
 Standard pools:
 - agenda Scheduled, Active
-- delay Scheduled, Inactive
+- defer Scheduled, Inactive; Ready to be placed on the agenda
+- roadmap Unsheduled; Not ready. Targeted as part of long-term roadmap
 - debt Unscheduled; Recognized caveats with current agenda or implementation
-- maybe Unscheduled; Further analysis required
+- maybe Unscheduled; Possibility. Further analysis required
 
 ##### PLAN STAGE
 `gramdef GramPlanStage`
@@ -445,18 +443,15 @@ YAML indices and corresponding Markdown:
 ### EXAMPLE: state/[next now last].yaml
 ```yaml
 rev: 32
-ptr: {journal:32}
-refs:
-- ref: {journal:31}
-- ref: {info:know_your_role::roles}
+ptr: {log:jab/fps:331}
 ```
 
-### EXAMPLE: 00_Reference.yaml
+### EXAMPLE: info.yaml
 ```yaml
-- ref: some_alias
-  ptr: {iter:other:info:KnowTheRole::Roles}
-- ref: some_src
-  file: ~/proj/my-project/src/foo.rs
-- ref: some_site
-  url: https://foo.tld/bar.html
+- alias: '{some_alias}'
+  ref: '{iter:other:info:KnowTheRole::Roles}'
+- alias: '{some_src}'
+  ref: '{file:~/proj/my-project/src/foo.rs}'
+- alias: '{some_site}'
+  ref: '{url:https://foo.tld/bar.html}'
 ```
