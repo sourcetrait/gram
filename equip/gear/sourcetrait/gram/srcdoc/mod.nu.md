@@ -1,13 +1,13 @@
 # gram/mod.nu
 
-The CLI, User's, a module: `cd ~/ai/two; use gram` once a session, or `use
-~/ai/two/gram` in config.nu, every command then `gram <command>`. `overlay
-use --prefix gram` brings the same names in an overlay of their own,
-`overlay hide gram` taking them out, and a plain `overlay use gram` brings
-them in bare. `use` binds at parse time, so a change to gram's code takes
-another `use gram`.
+The CLI, a module: `use gear/sourcetrait/gram` from nu's library path, or
+`use` by its own path, then `gram <command>` from anywhere inside a git
+work tree, gram working on that repository. `overlay use --prefix` brings
+the same names in an overlay of their own, `overlay hide gram` taking them
+out, and a plain `overlay use` brings them in bare. `use` binds at parse
+time, so a change to gram's code takes another `use`.
 
-Each command wraps one library function under the name User types: `log
+Each command wraps one library function under the name its user types: `log
 last` calls `log latest`, `state last` `state latest`, `state roll` `state
 advance`, `states` `state states`, and `ref` `ref resolve`, `last` and
 `roll` being builtins a library function never takes. A one-or-many subject

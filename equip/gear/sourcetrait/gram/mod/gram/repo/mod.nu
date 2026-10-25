@@ -1,10 +1,10 @@
-const MOD_DIR = path self .
-
-# The ai repository's root: the git work tree holding these modules.
+# The repository's root: the git work tree the working directory sits in.
 export def repo_dir []: nothing -> directory {
-    let found = (^git -C $MOD_DIR rev-parse --show-toplevel | complete)
+    let found = (^git -C $env.PWD rev-parse --show-toplevel | complete)
     if $found.exit_code != 0 {
-        error make --unspanned $"gram sits in no git work tree: ($MOD_DIR)"
+        error make --unspanned (
+            $"no git work tree at ($env.PWD); gram runs inside one"
+        )
     }
     $found.stdout | str trim
 }

@@ -71,7 +71,7 @@ is held to that shape before a path is built from it, so no ref leaves
 `mem/`. Its summary is its entry's in `mem/mem.yaml`.
 
 A file ref's path is returned as it is written, its tail dropped, held to
-exist: `./` and a bare path from the ai repository's root, `~/` from home.
+exist: `./` and a bare path from the repository's root, `~/` from home.
 It has no summary.
 
 ## plan_located
