@@ -25,7 +25,7 @@ export def log []: nothing -> string {
 export def "log last" [
     iter: string
 ]: nothing -> record<rev: int, summary: string, file: path> {
-    use ./mod/gram/log
+    use ../../../lib/sourcetrait/gram/log
     log latest $iter
 }
 
@@ -39,7 +39,7 @@ export def "log rev" [
         table<rev: int, summary: string, file: path>
     >
 ] {
-    use ./mod/gram/log
+    use ../../../lib/sourcetrait/gram/log
     log rev $iter $rev
 }
 
