@@ -20,10 +20,9 @@ an error raised inside an `each` closure reaches the caller as nushell's
 
 ## repo_dir_iter
 
-Both separators split the namepath, since GramRef's paths and the older
-colons both hold through the transition. Each part is held to letters,
-digits, `_`, and `-`, which refuses an empty part, `.`, and `..`, so no
-namepath leaves `iter/`. The iter's own directory is checked before its
-categories, so a missing iter is reported as missing rather than as a
-category fault. A category is listed with its hidden entries, since
-anything in it but a directory breaks the rule.
+Both separators split the namepath, `foo/bar` and `foo:bar` naming the same
+subiter. Each part is held to letters, digits, `_`, and `-`, which refuses
+an empty part, `.`, and `..`, so no namepath leaves `iter/`. The iter's own
+directory is checked before its categories, so a missing iter is reported
+as missing rather than as a category fault. A category is listed with its
+hidden entries, since anything in it but a directory breaks the rule.

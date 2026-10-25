@@ -41,7 +41,7 @@ export def require_files [
     }
 }
 
-# An iter's `./` directory from a namepath: `jab`, `jab/fps`, or `jab:fps`.
+# An iter's `./` directory from a namepath: `foo`, `foo/bar`, or `foo:bar`.
 export def repo_dir_iter [
     gram_repo: directory
     iter: string

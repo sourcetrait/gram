@@ -7,12 +7,13 @@ the same names in an overlay of their own, `overlay hide gram` taking them
 out, and a plain `overlay use` brings them in bare. `use` binds at parse
 time, so a change to gram's code takes another `use`.
 
-Each command wraps one library function under the name its user types: `log
-last` calls `log latest`, `state last` `state latest`, `state roll` `state
-advance`, `states` `state states`, and `ref` `ref resolve`, `last` and
-`roll` being builtins a library function never takes. A one-or-many subject
-is one argument, a value or a list literal, `gram log rev jab [343 344]`, a
-record back for one and a table for a list; nothing reads `$in`.
+Each command wraps one library function under the name typed at the command
+line: `log last` calls `log latest`, `state last` `state latest`, `state
+roll` `state advance`, `states` `state states`, and `ref` `ref resolve`,
+`last` and `roll` being builtins a library function never takes. A
+one-or-many subject is one argument, a value or a list literal, `gram log
+rev foo [3 4]`, a record back for one and a table for a list; nothing reads
+`$in`.
 
 Every wrapper imports its library inside its own body. A module-level `use`
 would put a library command beside the wrapper of the same name, and `log
@@ -21,7 +22,7 @@ rev` would call itself until nu's recursion limit; a module file refuses
 the wrapper for that body alone.
 
 `ref` and `state roll` take a GramRef braced or braceless, `gram ref
-log:jab/fps:32` or `gram ref [log:jab:1 mem:GramLog]`, and brace it through
+log:foo/bar:32` or `gram ref [log:foo:1 mem:Topic]`, and brace it through
 `ref braced`: nu refuses an unquoted braced ref of two or more colons and
 reads one of one colon as a record. A ref with a `#` tail still takes
 quotes, `#` opening a comment.

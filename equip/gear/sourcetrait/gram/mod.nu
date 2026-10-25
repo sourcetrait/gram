@@ -1,4 +1,4 @@
-# The GramGov tools for the ai repository; gram alone lists every command.
+# GramGov's tools for the repository it runs in; gram alone lists every command.
 export def main []: nothing -> string {
     let own = (scope modules | where name == 'gram' | first | get commands)
     let ids = ($own | get decl_id)
