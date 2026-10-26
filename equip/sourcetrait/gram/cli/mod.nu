@@ -16,36 +16,26 @@ export def main []: nothing -> string {
     [$head.description '' 'Commands:' ...$listed] | str join (char nl)
 }
 
-# An iter's GramIter.
-export def iter []: nothing -> string {
-    help gram iter
-}
-
-# A new iter scaffolded: its empty indices, its fresh state, its empty bootstrap.
-export def "iter new" [
+# An iter's model: its namepath, its directory, its summary, and its nest.
+export def "get iter" [
     iter: string
-]: nothing -> record<iter: string, path: directory, files: list<path>> {
+]: [
+    nothing -> record<
+        iter: string, path: directory, summary: string,
+        nest: oneof<
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
+        >
+    >
+] {
     use ../lib/iter
-    iter new $iter
+    iter $iter
 }
 
-# An iter's GramLog.
-export def log []: nothing -> string {
-    help gram log
-}
-
-# The newest entry in an iter's log: its rev, its summary, and its file.
-export def "log last" [
+# The newest entry in an iter's log, or entries by rev, a record or a table.
+export def "get log" [
     iter: string
-]: nothing -> record<rev: int, summary: string, file: path> {
-    use ../lib/log
-    log latest $iter
-}
-
-# One entry in an iter's log by its rev, or a table of them by a list of revs.
-export def "log rev" [
-    iter: string
-    rev: oneof<int, list<int>>
+    rev?: oneof<int, list<int>>
 ]: [
     nothing -> oneof<
         record<rev: int, summary: string, file: path>,
@@ -53,16 +43,147 @@ export def "log rev" [
     >
 ] {
     use ../lib/log
-    log rev $iter $rev
+    log $iter $rev
+}
+
+# A campaign's index entry from whichever pool lists it, with its pool and file.
+export def "get campaign" [
+    iter: string
+    campaign: string
+]: [
+    nothing -> record<
+        campaign: string, pool: string, summary: string, stage: string,
+        tasks: table<task: string, summary: string>, file: path
+    >
+] {
+    use ../lib/plan
+    plan campaign $iter $campaign
+}
+
+# A task's index entry by its plan namepath, with its campaign, pool, and file.
+export def "get task" [
+    iter: string
+    task: string
+]: [
+    nothing -> record<
+        task: string, campaign: string, pool: string, summary: string,
+        stage: string, tasks: table<task: string, summary: string>,
+        file: oneof<nothing, path>
+    >
+] {
+    use ../lib/plan
+    plan task $iter $task
+}
+
+# An iter's next, now, and last states in one record.
+export def "get state" [
+    iter: string
+]: [
+    nothing -> record<
+        next: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        now: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        last: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >
+    >
+] {
+    use ../lib/state
+    state states $iter
+}
+
+# A sequence by name, or a table of them by a list of names.
+export def "get sequence" [
+    iter: string
+    sequence: oneof<list<string>, string>
+]: [
+    nothing -> oneof<
+        record<name: string, summary: string, file: path>,
+        table<name: string, summary: string, file: path>
+    >
+] {
+    use ../lib/sequence
+    sequence $iter $sequence
+}
+
+# A protocol by name, or a table of them by a list of names.
+export def "get protocol" [
+    iter: string
+    protocol: oneof<list<string>, string>
+]: [
+    nothing -> oneof<
+        record<
+            name: string, summary: string, apply: table<on: string>, file: path
+        >,
+        table<
+            name: string, summary: string, apply: table<on: string>, file: path
+        >
+    >
+] {
+    use ../lib/protocol
+    protocol $iter $protocol
+}
+
+# New iters, log entries, campaigns, and tasks, each scaffolded.
+export def new []: nothing -> string {
+    help gram new
+}
+
+# A new iter scaffolded: its empty indices, its fresh state, its empty bootstrap.
+export def "new iter" [
+    iter: string
+]: nothing -> record<iter: string, path: directory, files: list<path>> {
+    use ../lib/iter
+    iter new $iter
 }
 
 # A new entry in an iter's log: its index item and a stub titled with its rev.
-export def "log new" [
+export def "new log" [
     iter: string
     summary: string
 ]: nothing -> record<rev: int, summary: string, file: path> {
     use ../lib/log
     log new $iter $summary
+}
+
+# A campaign scaffolded into a pool at criteria, as get campaign returns it.
+export def "new campaign" [
+    iter: string
+    pool: string
+    campaign: string
+    summary: string
+]: [
+    nothing -> record<
+        campaign: string, pool: string, summary: string, stage: string,
+        tasks: table<task: string, summary: string>, file: path
+    >
+] {
+    use ../lib/plan
+    plan new campaign $iter $pool $campaign $summary
+}
+
+# A task scaffolded under its plan namepath at criteria, as get task returns it.
+export def "new task" [
+    iter: string
+    task: string
+    summary: string
+]: [
+    nothing -> record<
+        task: string, campaign: string, pool: string, summary: string,
+        stage: string, tasks: table<task: string, summary: string>,
+        file: oneof<nothing, path>
+    >
+] {
+    use ../lib/plan
+    plan new task $iter $task $summary
+}
+
+# An iter's GramLog.
+export def log []: nothing -> string {
+    help gram log
 }
 
 # Every entry but the newest 20 moved into its old/log shard and its index.
@@ -81,7 +202,7 @@ export def ref [
         record<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            nest: oneof<
+            actual: oneof<
                 nothing,
                 record<top: string, summary: string, path: directory>,
                 table<sub: string, summary: string, path: directory>
@@ -90,7 +211,7 @@ export def ref [
         table<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            nest: oneof<
+            actual: oneof<
                 nothing,
                 record<top: string, summary: string, path: directory>,
                 table<sub: string, summary: string, path: directory>
@@ -102,148 +223,9 @@ export def ref [
     ref resolve (ref braced $ref)
 }
 
-# A sequence by name, or a table of them by a list of names.
-export def sequence [
-    iter: string
-    sequence: oneof<list<string>, string>
-]: [
-    nothing -> oneof<
-        record<name: string, summary: string, file: path>,
-        table<name: string, summary: string, file: path>
-    >
-] {
-    use ../lib/sequence
-    sequence $iter $sequence
-}
-
-# A protocol by name, or a table of them by a list of names.
-export def protocol [
-    iter: string
-    protocol: oneof<list<string>, string>
-]: [
-    nothing -> oneof<
-        record<
-            name: string, summary: string, apply: table<on: string>, file: path
-        >,
-        table<
-            name: string, summary: string, apply: table<on: string>, file: path
-        >
-    >
-] {
-    use ../lib/protocol
-    protocol $iter $protocol
-}
-
-# An iter's GramPlan.
-export def plan []: nothing -> string {
-    help gram plan
-}
-
-# A campaign's index entry from whichever pool lists it, with its pool and file.
-export def "plan campaign" [
-    iter: string
-    campaign: string
-]: [
-    nothing -> record<
-        campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
-    >
-] {
-    use ../lib/plan
-    plan campaign $iter $campaign
-}
-
-# A task's index entry by its plan namepath, with its campaign, pool, and file.
-export def "plan task" [
-    iter: string
-    task: string
-]: [
-    nothing -> record<
-        task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
-        file: oneof<nothing, path>
-    >
-] {
-    use ../lib/plan
-    plan task $iter $task
-}
-
-# New entries in an iter's GramPlan.
-export def "plan new" []: nothing -> string {
-    help gram plan new
-}
-
-# A campaign scaffolded into a pool at criteria, returned as campaign returns it.
-export def "plan new campaign" [
-    iter: string
-    pool: string
-    campaign: string
-    summary: string
-]: [
-    nothing -> record<
-        campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
-    >
-] {
-    use ../lib/plan
-    plan new campaign $iter $pool $campaign $summary
-}
-
-# A task scaffolded under its plan namepath at criteria, returned as task does.
-export def "plan new task" [
-    iter: string
-    task: string
-    summary: string
-]: [
-    nothing -> record<
-        task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
-        file: oneof<nothing, path>
-    >
-] {
-    use ../lib/plan
-    plan new task $iter $task $summary
-}
-
 # An iter's GramState.
 export def state []: nothing -> string {
     help gram state
-}
-
-# An iter's now state: its rev, its ptr, and the file its ptr names.
-export def "state now" [
-    iter: string
-]: [
-    nothing -> record<
-        rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-    >
-] {
-    use ../lib/state
-    state now $iter
-}
-
-# An iter's next state: its rev, its ptr, and the file its ptr names.
-export def "state next" [
-    iter: string
-]: [
-    nothing -> record<
-        rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-    >
-] {
-    use ../lib/state
-    state next $iter
-}
-
-# An iter's last state: its rev, its ptr, and the file its ptr names.
-export def "state last" [
-    iter: string
-]: [
-    nothing -> record<
-        rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-    >
-] {
-    use ../lib/state
-    state latest $iter
 }
 
 # An iter's state rolled: now to last, next to now, and the ptr into next.
@@ -262,24 +244,4 @@ export def "state fresh" [
 ]: nothing -> int {
     use ../lib/state
     state fresh $iter
-}
-
-# An iter's next, now, and last states in one record.
-export def states [
-    iter: string
-]: [
-    nothing -> record<
-        next: record<
-            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-        >,
-        now: record<
-            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-        >,
-        last: record<
-            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
-        >
-    >
-] {
-    use ../lib/state
-    state states $iter
 }

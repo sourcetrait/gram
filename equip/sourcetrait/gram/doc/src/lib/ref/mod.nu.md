@@ -7,9 +7,10 @@ it, so a ptr naming a missing file is refused.
 
 ## resolve
 
-Each ref as `located` reads it, its path, its summary, and its `nest`
-beside it: a record for one ref, a table in the given order for a list. An
-iter's `nest` is its place in the tree and every other ref's null, so every
+Each ref as `located` reads it, its path, its summary, and its `actual`
+beside it: a record for one ref, a table in the given order for a list.
+`actual` is the generic model's place for a kind's own part, an iter's nest
+from `iter`, its top or its subiters, and every other ref's null, so every
 row has one shape; no tasks and no `apply`. The refs are
 read in a loop rather than a closure, so a refused ref's own message is the
 error. `oneof<list<string>, string>` keeps the list first, as `protocol`
@@ -36,8 +37,9 @@ A GramRef is `{kind:body}`. `none`, GramRef's null, names no file and has
 no summary, and neither has a `url` or any other kind outside those held. The
 kinds held: `log`, `protocol`, `sequence`, `mem`, `info`, `study`, `plan`,
 `file`, and `iter`, with `proto` and `seq` read as `protocol` and
-`sequence`, the short names older refs carry. An iter ref goes to
-`iter_located`, and every other kind's record gains a null `nest`. A
+`sequence`, the short names older refs carry. An iter ref is read through
+`iter`, its model's nest its `actual`, and every other kind's record gains
+a null `actual`. A
 log, protocol, or sequence ref resolves through the log, protocol, and
 sequence modules, so each index's checks keep one home: the entry listed
 once and its file present; its summary is that entry's. Their body splits
@@ -83,22 +85,9 @@ A plan ref's body is its iter, then the plan namepath, which opens in a
 campaign's capital; a body with none is a whole iter's tasking, its path
 the iter's `plan/` and no summary. A campaign's path and summary are `plan
 campaign`'s; a task's summary is `plan task`'s, and its path the nearest
-file holding it: its own, else its parent task's, up to its campaign's.
-
-## iter_located and iter_index
-
-An iter ref names an iter by its namepath, `{iter:foo}` or `{iter:foo/bar}`,
-either separator: its path is the iter's directory as `common repo_dir_iter`
-finds it, and its summary is its top iter's `iter.yaml`'s, the file's own
-`summary` for a top iter and its entry under `subiters` for a subiter. Its
-`nest` is a oneof whose shape tells the two apart: a top iter's is a table
-of its subiters, each its `sub`, a GramRef, `{iter:foo/bar}`, its summary,
-and its directory, held to exist; a subiter's is a record of its top iter,
-its `top`, `{iter:foo}`, its summary, and its directory. `iter_index`
-reads `iter.yaml` and refuses it missing, without a `summary`, or with a
-subiter lacking its `sub` or `summary`; a subiter the file lists twice or
-not at all is refused. The subiters are gathered in a loop, so a listed
-subiter's missing directory is refused by name.
+file holding it: its own, else its parent task's, up to its campaign's. Its
+iter is read by cell path, `($named | first).iter`, since a `get iter` here
+is the CLI's `get iter` when the CLI imports this module (cli/mod.nu).
 
 ## indexed_summary and listed_summary
 

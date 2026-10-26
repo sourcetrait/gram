@@ -7,19 +7,34 @@ it out. The module's directory is `cli`, so a plain `use` would name it
 `cli`, while its listing and its help groups look for `gram`. `--reload`
 re-reads gram's code, which an overlay binds at parse time.
 
-Each command wraps one library function under the name typed at the command
-line: `log last` calls `log latest`, `state last` `state latest`, `state
-roll` `state advance`, `states` `state states`, and `ref` `ref resolve`,
-`last` and `roll` being builtins a library function never takes. A
-one-or-many subject is one argument, a value or a list literal, `gram log
-rev foo [3 4]`, a record back for one and a table for a list; nothing reads
+A command leads with its verb: `get <kind>` reads a kind's concrete model,
+`new <kind>` scaffolds one, and `ref` reads any GramRef's generic model, its
+`actual` the kind's own part where it has one; `log prune`, `state roll`,
+and `state fresh`, neither a get nor a new, stay under their kind. Each
+wraps one library function: `get iter` calls `iter`, `get log` `log`, `get
+campaign` and `get task` `plan campaign` and `plan task`, `get state` `state
+states`, `get sequence` `sequence`, and `get protocol` `protocol`; `new
+iter` calls `iter new`, `new log` `log new`, and `new campaign` and `new
+task` `plan new campaign` and `plan new task`; `state roll` calls `state
+advance`, `roll` being a builtin a library function never takes; and `ref`
+calls `ref resolve`. A one-or-many subject is one argument, a value or a
+list literal, `gram get log foo [3 4]`, a record back for one and a table
+for a list; `get log` with no rev reads the newest entry. Nothing reads
 `$in`.
 
 Every wrapper imports its library module, `../lib/<concept>`, inside its own
 body. A module-level `use` would put a library command beside the wrapper of
-the same name, and `log rev` would call itself until nu's recursion limit; a
-module file refuses `overlay use`, which could rename the library. The
+the same name, and `log prune` would call itself until nu's recursion limit;
+a module file refuses `overlay use`, which could rename the library. The
 body's import shadows the wrapper for that body alone.
+
+A library module a wrapper's body imports is parsed inside this module's
+scope, so this module's commands bind there too: a `get <kind>` command
+takes any `get` of a field that kind names, and `get iter` in a library is
+this module's `get iter`, a parse failure on its missing argument when
+measured. A library reads such a field by its cell path, `($row).iter`. No
+command is named `get` alone, which would take every `get`; `new`, `log`,
+and `state` print nu's help, which lists their subcommands.
 
 `ref` and `state roll` take a GramRef braced or braceless, `gram ref
 log:foo/bar:32` or `gram ref [log:foo:1 mem:Topic]`, and brace it through
@@ -29,8 +44,7 @@ quotes, `#` opening a comment.
 
 `gram` alone lists every command with its summary: the commands of the
 module named `gram`, by their declarations in `scope modules`, each named as
-the session has it, `gram log rev` under the prefix. nu's `gram --help`
+the session has it, `gram get log` under the prefix. nu's `gram --help`
 cannot list them, since it looks for subcommands of the def's own name,
 `main`, and a module's `main` takes no `--help` of its own; its summary line
-points to `gram`. `iter`, `log`, `plan`, `plan new`, and `state` print
-nu's help, which lists their subcommands.
+points to `gram`.

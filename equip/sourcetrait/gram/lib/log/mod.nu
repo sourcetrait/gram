@@ -4,6 +4,19 @@ use ../repo
 # The newest entries a prune leaves in an iter's log/log.yaml.
 const KEPT = 20
 
+# The newest entry in an iter's log, or entries by rev, a record or a table.
+export def main [
+    iter: string
+    rev?: oneof<int, list<int>>
+]: [
+    nothing -> oneof<
+        record<rev: int, summary: string, file: path>,
+        table<rev: int, summary: string, file: path>
+    >
+] {
+    if $rev == null { latest $iter } else { rev $iter $rev }
+}
+
 # The newest entry in an iter's log: its rev, its summary, and its file.
 export def latest [
     iter: string

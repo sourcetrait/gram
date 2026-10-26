@@ -18,6 +18,58 @@ const INDICES = [
 # A new iter's summary in its top iter's iter.yaml, until one is written.
 const SUMMARY = 'To do'
 
+# An iter's model: its namepath, its directory, its summary, and its nest.
+export def main [
+    iter: string
+]: [
+    nothing -> record<
+        iter: string, path: directory, summary: string,
+        nest: oneof<
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
+        >
+    >
+] {
+    let repo_dir = (repo repo_dir)
+    let iter_dir = (common repo_dir_iter $repo_dir $iter)
+    let parts = ($iter | split row --regex '[:/]')
+    let namepath = ($parts | str join '/')
+    let top = ($parts | first)
+    let index_file = (['.' 'iter' $top 'iter.yaml'] | path join)
+    let index = (read_index $repo_dir $index_file)
+    if ($parts | length) == 1 {
+        mut subs = []
+        for entry in $index.subiters {
+            let sub_namepath = ([$top $entry.sub] | str join '/')
+            let sub_iter = {
+                sub: $"{iter:($sub_namepath)}", summary: $entry.summary,
+                path: (common repo_dir_iter $repo_dir $sub_namepath)
+            }
+            $subs = ($subs | append $sub_iter)
+        }
+        return {
+            iter: $namepath, path: $iter_dir, summary: $index.summary,
+            nest: $subs
+        }
+    }
+    let sub = ($parts | skip 1 | str join '/')
+    let listed = ($index.subiters | where {|entry| $entry.sub == $sub })
+    if ($listed | is-empty) {
+        error make --unspanned $"no sub ($sub) in ($index_file)"
+    }
+    if ($listed | length) > 1 {
+        error make --unspanned $"sub ($sub) listed twice in ($index_file)"
+    }
+    let top_iter = {
+        top: $"{iter:($top)}", summary: $index.summary,
+        path: (common repo_dir_iter $repo_dir $top)
+    }
+    {
+        iter: $namepath, path: $iter_dir,
+        summary: ($listed | first | get summary), nest: $top_iter
+    }
+}
+
 # A new iter scaffolded: its empty indices, its fresh state, its empty bootstrap.
 export def new [
     iter: string
@@ -114,4 +166,29 @@ def check_categories [
             }
         }
     }
+}
+
+# A top iter's iter.yaml, its summary and its subiters, each held to its shape.
+def read_index [
+    repo_dir: directory
+    index_file: path
+]: nothing -> record<summary: string, subiters: table<sub: string, summary: string>> {
+    if not ($repo_dir | path join $index_file | path exists) {
+        error make --unspanned $"no index: ($index_file)"
+    }
+    let index = (open ($repo_dir | path join $index_file))
+    let summary = ($index | get -o summary)
+    if ($summary | describe) != 'string' {
+        error make --unspanned $"no summary in ($index_file)"
+    }
+    let subiters = ($index | get -o subiters | default [])
+    let malformed = ($subiters | where {|entry|
+        let named = (($entry | get -o sub | describe) == 'string')
+        let summarized = (($entry | get -o summary | describe) == 'string')
+        not ($named and $summarized)
+    })
+    if ($malformed | is-not-empty) {
+        error make --unspanned $"a subiter without its sub or summary in ($index_file)"
+    }
+    {summary: $summary, subiters: ($subiters | select sub summary)}
 }

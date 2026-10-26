@@ -1,5 +1,20 @@
 # lib/iter/mod.nu
 
+## main
+
+An iter's concrete model by its namepath, `foo` or `foo/bar`, either
+separator: `iter` its namepath written with `/`, `path` its directory as
+`common repo_dir_iter` finds it, `summary` its top iter's `iter.yaml`'s,
+the file's own `summary` for a top iter and its entry under `subiters` for
+a subiter, and `nest`, a oneof whose shape tells the two apart. A top
+iter's is a table of its subiters, each its `sub`, a GramRef,
+`{iter:foo/bar}`, its summary, and its directory, held to exist, `[]` where
+it has none; a subiter's is a record of its top iter, its `top`,
+`{iter:foo}`, its summary, and its directory. A subiter its top iter's file
+lists twice or not at all is refused. The subiters are gathered in a loop,
+so a listed subiter's missing directory is refused by name. `ref resolve`
+gives an iter ref this nest as its `actual`.
+
 ## new
 
 A new iter scaffolded at its namepath, `foo` a top iter at `./iter/foo` and
@@ -26,3 +41,9 @@ summary, and one already listing the subiter are refused.
 A subiter may sit under category directories, `foo/game/arena` at
 `./iter/foo/sub/game/arena`; an existing category holding a file is
 refused, as `common repo_dir_iter` refuses it on reading.
+
+## read_index
+
+A top iter's `iter.yaml` as `main` reads it, refused missing, without a
+`summary`, or with a subiter lacking its `sub` or `summary`. Unlike
+`top_index` it takes the file in any form, since nothing is written back.

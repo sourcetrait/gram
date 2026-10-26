@@ -1,4 +1,5 @@
 use ../common
+use ../iter
 use ../log
 use ../plan
 use ../protocol
@@ -20,7 +21,7 @@ export def resolve [
         record<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            nest: oneof<
+            actual: oneof<
                 nothing,
                 record<top: string, summary: string, path: directory>,
                 table<sub: string, summary: string, path: directory>
@@ -29,7 +30,7 @@ export def resolve [
         table<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            nest: oneof<
+            actual: oneof<
                 nothing,
                 record<top: string, summary: string, path: directory>,
                 table<sub: string, summary: string, path: directory>
@@ -43,7 +44,7 @@ export def resolve [
     for one in $refs {
         let at = (located $one)
         let entry = {
-            ref: $one, path: $at.path, summary: $at.summary, nest: $at.nest
+            ref: $one, path: $at.path, summary: $at.summary, actual: $at.actual
         }
         $found = ($found | append $entry)
     }
@@ -101,7 +102,7 @@ def located [
 ]: [
     nothing -> record<
         path: oneof<nothing, path>, summary: oneof<nothing, string>,
-        nest: oneof<
+        actual: oneof<
             nothing,
             record<top: string, summary: string, path: directory>,
             table<sub: string, summary: string, path: directory>
@@ -109,7 +110,7 @@ def located [
     >
 ] {
     if $ref == 'none' {
-        return {path: null, summary: null, nest: null}
+        return {path: null, summary: null, actual: null}
     }
     let parts = ($ref | parse --regex '^\{(?P<kind>[a-z]+):(?P<body>[^{}]+)\}$')
     if ($parts | is-empty) {
@@ -118,7 +119,8 @@ def located [
     let kind = ($parts | first | get kind)
     let body = ($parts | first | get body)
     if $kind == 'iter' {
-        return (iter_located $body)
+        let model = (iter $body)
+        return {path: $model.path, summary: $model.summary, actual: $model.nest}
     }
     let found = match $kind {
         'log' => {
@@ -219,78 +221,7 @@ def located [
         }
         _ => {path: null, summary: null}
     }
-    $found | insert nest null
-}
-
-# An iter's directory, summary from its top's iter.yaml, and top or subiters.
-def iter_located [
-    body: string
-]: [
-    nothing -> record<
-        path: oneof<nothing, path>, summary: oneof<nothing, string>,
-        nest: oneof<
-            nothing,
-            record<top: string, summary: string, path: directory>,
-            table<sub: string, summary: string, path: directory>
-        >
-    >
-] {
-    let repo_dir = (repo repo_dir)
-    let iter_dir = (common repo_dir_iter $repo_dir $body)
-    let parts = ($body | split row --regex '[:/]')
-    let top = ($parts | first)
-    let index_file = (['.' 'iter' $top 'iter.yaml'] | path join)
-    let index = (iter_index $repo_dir $index_file)
-    if ($parts | length) == 1 {
-        mut subs = []
-        for entry in $index.subiters {
-            let namepath = ([$top $entry.sub] | str join '/')
-            let sub_iter = {
-                sub: $"{iter:($namepath)}", summary: $entry.summary,
-                path: (common repo_dir_iter $repo_dir $namepath)
-            }
-            $subs = ($subs | append $sub_iter)
-        }
-        return {path: $iter_dir, summary: $index.summary, nest: $subs}
-    }
-    let sub = ($parts | skip 1 | str join '/')
-    let listed = ($index.subiters | where {|entry| $entry.sub == $sub })
-    if ($listed | is-empty) {
-        error make --unspanned $"no sub ($sub) in ($index_file)"
-    }
-    if ($listed | length) > 1 {
-        error make --unspanned $"sub ($sub) listed twice in ($index_file)"
-    }
-    let top_iter = {
-        top: $"{iter:($top)}", summary: $index.summary,
-        path: (common repo_dir_iter $repo_dir $top)
-    }
-    {path: $iter_dir, summary: ($listed | first | get summary), nest: $top_iter}
-}
-
-# A top iter's iter.yaml, its summary and its subiters, each held to its shape.
-def iter_index [
-    repo_dir: directory
-    index_file: path
-]: nothing -> record<summary: string, subiters: table<sub: string, summary: string>> {
-    if not ($repo_dir | path join $index_file | path exists) {
-        error make --unspanned $"no index: ($index_file)"
-    }
-    let index = (open ($repo_dir | path join $index_file))
-    let summary = ($index | get -o summary)
-    if ($summary | describe) != 'string' {
-        error make --unspanned $"no summary in ($index_file)"
-    }
-    let subiters = ($index | get -o subiters | default [])
-    let malformed = ($subiters | where {|entry|
-        let named = (($entry | get -o sub | describe) == 'string')
-        let summarized = (($entry | get -o summary | describe) == 'string')
-        not ($named and $summarized)
-    })
-    if ($malformed | is-not-empty) {
-        error make --unspanned $"a subiter without its sub or summary in ($index_file)"
-    }
-    {summary: $summary, subiters: ($subiters | select sub summary)}
+    $found | insert actual null
 }
 
 # A summary from an index, the one item whose key names the entry.
@@ -338,7 +269,7 @@ def plan_located [
         let iter_dir = (common repo_dir_iter $repo_dir $body)
         return {path: ($iter_dir | path join 'plan'), summary: null}
     }
-    let iter = ($named | first | get iter)
+    let iter = ($named | first).iter
     let names = ($named | first | get name | split row '/')
     if ($names | length) == 1 {
         let entry = (plan campaign $iter ($names | first))
