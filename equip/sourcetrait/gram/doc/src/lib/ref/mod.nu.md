@@ -7,14 +7,12 @@ it, so a ptr naming a missing file is refused.
 
 ## resolve
 
-Each ref as `located` reads it, its path, its summary, and its `actual`
-beside it: a record for one ref, a table in the given order for a list.
-`actual` is the generic model's place for a kind's own part, an iter's nest
-from `iter`, its top or its subiters, and every other ref's null, so every
-row has one shape; no tasks and no `apply`. The refs are
-read in a loop rather than a closure, so a refused ref's own message is the
-error. `oneof<list<string>, string>` keeps the list first, as `protocol`
-and `sequence` do.
+Each ref as `located` reads it, its path and its summary beside it: a
+record for one ref, a table in the given order for a list, and nothing
+nested, no tasks and no `apply`; a kind's concrete model is `model`'s. The
+refs are read in a loop rather than a closure, so a refused ref's own
+message is the error. `oneof<list<string>, string>` keeps the list first,
+as `protocol` and `sequence` do.
 
 ## braced and braceless
 
@@ -46,13 +44,11 @@ no summary, and neither has a `url` or any other kind outside those held. The
 kinds held: `log`, `protocol`, `sequence`, `mem`, `info`, `study`, `plan`,
 `file`, and `iter`, with `proto` and `seq` read as `protocol` and
 `sequence`, the short names older refs carry. An iter ref is read through
-`iter`, its model's nest its `actual`, and every other kind's record gains
-a null `actual`. A
-log, protocol, or sequence ref resolves through the log, protocol, and
-sequence modules, so each index's checks keep one home: the entry listed
-once and its file present; its summary is that entry's. Their body splits
-at its last colon, so the iter takes either namepath separator, `foo/bar`
-or `foo:bar`.
+`iter`, its model's directory and summary. A log, protocol, or sequence ref
+resolves through the log, protocol, and sequence modules, so each index's
+checks keep one home: the entry listed once and its file present; its
+summary is that entry's. Their body splits at its last colon, so the iter
+takes either namepath separator, `foo/bar` or `foo:bar`.
 
 An info ref names a GramInfo concept, `{info:foo/bar:Concept}`, the
 iter first, then the concept's path, then any header anchors, and a

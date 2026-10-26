@@ -13,12 +13,12 @@ table in the order asked, the kinds `iter`, `log`, `campaign`, `task`,
 `sequence`, `protocol`, and `state`, each pair wrapping `model <kind>`.
 `new <kind>` scaffolds one: `new iter` calls `iter new`, `new log` `log
 new`, and `new campaign` and `new task` `plan new campaign` and `plan new
-task`. `ref` reads GramRefs' generic model through `ref resolve`, a record
-for one and a table for a list literal, its `actual` the kind's own part
-where it has one. `log prune`, `state roll`, and `state fresh`, neither a
-get nor a new, stay under their kind; `state roll` calls `state advance`,
-`roll` being a builtin a library function never takes. Nothing reads
-`$in`.
+task`. `ref <ref>` reads one GramRef's path and indexed summary through
+`ref resolve`, a record, and `list ref <refs>` reads them by a list, a
+table; the singular keeps the name `ref` rather than `get ref`. `log
+prune`, `state roll`, and `state fresh`, neither a get nor a new, stay
+under their kind; `state roll` calls `state advance`, `roll` being a
+builtin a library function never takes. Nothing reads `$in`.
 
 Every wrapper imports its library module, `../lib/<concept>`, inside its own
 body. A module-level `use` would put a library command beside the wrapper of

@@ -279,33 +279,30 @@ export def "log prune" [
     log prune $iter
 }
 
-# Each GramRef's path and summary, an iter's top or subiters, a record or table.
+# A GramRef's path and indexed summary, the ref braced or braceless.
 export def ref [
-    ref: oneof<list<string>, string>
+    ref: string
 ]: [
-    nothing -> oneof<
-        record<
-            ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>,
-            actual: oneof<
-                nothing,
-                record<top: string, summary: string, path: directory>,
-                table<sub: string, summary: string, path: directory>
-            >
-        >,
-        table<
-            ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>,
-            actual: oneof<
-                nothing,
-                record<top: string, summary: string, path: directory>,
-                table<sub: string, summary: string, path: directory>
-            >
-        >
+    nothing -> record<
+        ref: string, path: oneof<nothing, path>,
+        summary: oneof<nothing, string>
     >
 ] {
     use ../lib/ref
     ref resolve (ref braced $ref)
+}
+
+# GramRefs' paths and indexed summaries, a table in the order asked.
+export def "list ref" [
+    refs: list<string>
+]: [
+    nothing -> table<
+        ref: string, path: oneof<nothing, path>,
+        summary: oneof<nothing, string>
+    >
+] {
+    use ../lib/ref
+    ref resolve (ref braced $refs)
 }
 
 # An iter's GramState.

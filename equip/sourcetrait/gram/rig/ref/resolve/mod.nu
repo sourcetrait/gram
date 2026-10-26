@@ -1,6 +1,6 @@
 use equip/sourcetrait/gram/lib/ref
 
-# GramRefs' paths and summaries, an iter's top or subiters, in the order asked.
-export def main [args: record<refs: list<string>>]: nothing -> record<refs: table<ref: string, path: oneof<nothing, path>, summary: oneof<nothing, string>, actual: oneof<nothing, record<top: string, summary: string, path: directory>, table<sub: string, summary: string, path: directory>>>> {
+# GramRefs' paths and indexed summaries, braced or braceless, in the order asked.
+export def main [args: record<refs: list<string>>]: nothing -> record<refs: table<ref: string, path: oneof<nothing, path>, summary: oneof<nothing, string>>> {
     { refs: (ref resolve (ref braced $args.refs)) }
 }

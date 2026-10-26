@@ -13,8 +13,8 @@ it has none; a subiter's is a record of its top iter, its `top`,
 `{iter:foo}`, its summary, and its directory. A subiter its top iter's file
 lists twice or not at all is refused. The subiters are gathered in a loop,
 so a listed subiter's missing directory is refused by name. `model iter`
-reads it by an iter ref, and `ref resolve` gives an iter ref this nest as
-its `actual`.
+reads it by an iter ref, and `ref resolve` an iter ref's directory and
+summary.
 
 ## new
 

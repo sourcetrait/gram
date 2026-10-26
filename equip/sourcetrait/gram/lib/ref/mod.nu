@@ -13,28 +13,18 @@ export def ref_filepath [
     located $ref | get path
 }
 
-# Each GramRef's path and summary, an iter's top or subiters, a record or table.
+# Each GramRef's path and indexed summary, a record or a table for a list.
 export def resolve [
     ref: oneof<list<string>, string>
 ]: [
     nothing -> oneof<
         record<
             ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>,
-            actual: oneof<
-                nothing,
-                record<top: string, summary: string, path: directory>,
-                table<sub: string, summary: string, path: directory>
-            >
+            summary: oneof<nothing, string>
         >,
         table<
             ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>,
-            actual: oneof<
-                nothing,
-                record<top: string, summary: string, path: directory>,
-                table<sub: string, summary: string, path: directory>
-            >
+            summary: oneof<nothing, string>
         >
     >
 ] {
@@ -43,9 +33,7 @@ export def resolve [
     mut found = []
     for one in $refs {
         let at = (located $one)
-        let entry = {
-            ref: $one, path: $at.path, summary: $at.summary, actual: $at.actual
-        }
+        let entry = {ref: $one, path: $at.path, summary: $at.summary}
         $found = ($found | append $entry)
     }
     if $single { $found | first } else { $found }
@@ -107,30 +95,25 @@ def one_braced [
     $"{($ref)}"
 }
 
-# A GramRef's file, its index's summary, an iter's top or subiters, or nothing.
+# A GramRef's file and the summary its index holds, each nothing where none is.
 def located [
     ref: string
 ]: [
     nothing -> record<
-        path: oneof<nothing, path>, summary: oneof<nothing, string>,
-        actual: oneof<
-            nothing,
-            record<top: string, summary: string, path: directory>,
-            table<sub: string, summary: string, path: directory>
-        >
+        path: oneof<nothing, path>, summary: oneof<nothing, string>
     >
 ] {
     if $ref == 'none' {
-        return {path: null, summary: null, actual: null}
+        return {path: null, summary: null}
     }
     let parts = (kind_body $ref)
     let kind = $parts.kind
     let body = $parts.body
-    if $kind == 'iter' {
-        let model = (iter $body)
-        return {path: $model.path, summary: $model.summary, actual: $model.nest}
-    }
-    let found = match $kind {
+    match $kind {
+        'iter' => {
+            let model = (iter $body)
+            {path: $model.path, summary: $model.summary}
+        }
         'log' => {
             let named = (iter_and_name $ref $body)
             if not ($named.name =~ '^[0-9]+$') {
@@ -229,7 +212,6 @@ def located [
         }
         _ => {path: null, summary: null}
     }
-    $found | insert actual null
 }
 
 # A summary from an index, the one item whose key names the entry.
