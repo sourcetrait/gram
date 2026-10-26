@@ -4,7 +4,7 @@
 ## Usage
 To load, from within Nushell:
 ```bash
-overlay -rp use gram
+overlay use -rp equip/sourcetrait/gram/cli as gram
 ```
 
 Use `gram --help` for further details.
