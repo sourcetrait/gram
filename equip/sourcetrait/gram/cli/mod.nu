@@ -73,7 +73,7 @@ export def "log prune" [
     log prune $iter
 }
 
-# Each GramRef's path and summary, a top iter's subiters, a record or a table.
+# Each GramRef's path and summary, an iter's top or subiters, a record or table.
 export def ref [
     ref: oneof<list<string>, string>
 ]: [
@@ -81,15 +81,19 @@ export def ref [
         record<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            subiters: oneof<
-                nothing, table<iter: path, summary: string, path: directory>
+            nest: oneof<
+                nothing,
+                record<top: string, summary: string, path: directory>,
+                table<sub: string, summary: string, path: directory>
             >
         >,
         table<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            subiters: oneof<
-                nothing, table<iter: path, summary: string, path: directory>
+            nest: oneof<
+                nothing,
+                record<top: string, summary: string, path: directory>,
+                table<sub: string, summary: string, path: directory>
             >
         >
     >

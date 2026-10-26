@@ -12,7 +12,7 @@ export def ref_filepath [
     located $ref | get path
 }
 
-# Each GramRef's path and summary, a top iter's subiters, a record or a table.
+# Each GramRef's path and summary, an iter's top or subiters, a record or table.
 export def resolve [
     ref: oneof<list<string>, string>
 ]: [
@@ -20,15 +20,19 @@ export def resolve [
         record<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            subiters: oneof<
-                nothing, table<iter: path, summary: string, path: directory>
+            nest: oneof<
+                nothing,
+                record<top: string, summary: string, path: directory>,
+                table<sub: string, summary: string, path: directory>
             >
         >,
         table<
             ref: string, path: oneof<nothing, path>,
             summary: oneof<nothing, string>,
-            subiters: oneof<
-                nothing, table<iter: path, summary: string, path: directory>
+            nest: oneof<
+                nothing,
+                record<top: string, summary: string, path: directory>,
+                table<sub: string, summary: string, path: directory>
             >
         >
     >
@@ -39,8 +43,7 @@ export def resolve [
     for one in $refs {
         let at = (located $one)
         let entry = {
-            ref: $one, path: $at.path, summary: $at.summary,
-            subiters: $at.subiters
+            ref: $one, path: $at.path, summary: $at.summary, nest: $at.nest
         }
         $found = ($found | append $entry)
     }
@@ -92,19 +95,21 @@ def one_braced [
     $"{($ref)}"
 }
 
-# A GramRef's file, its index's summary, and a top iter's subiters, or nothing.
+# A GramRef's file, its index's summary, an iter's top or subiters, or nothing.
 def located [
     ref: string
 ]: [
     nothing -> record<
         path: oneof<nothing, path>, summary: oneof<nothing, string>,
-        subiters: oneof<
-            nothing, table<iter: path, summary: string, path: directory>
+        nest: oneof<
+            nothing,
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
         >
     >
 ] {
     if $ref == 'none' {
-        return {path: null, summary: null, subiters: null}
+        return {path: null, summary: null, nest: null}
     }
     let parts = ($ref | parse --regex '^\{(?P<kind>[a-z]+):(?P<body>[^{}]+)\}$')
     if ($parts | is-empty) {
@@ -214,17 +219,19 @@ def located [
         }
         _ => {path: null, summary: null}
     }
-    $found | insert subiters null
+    $found | insert nest null
 }
 
-# An iter's directory and its summary from its top iter's iter.yaml, its subiters.
+# An iter's directory, summary from its top's iter.yaml, and top or subiters.
 def iter_located [
     body: string
 ]: [
     nothing -> record<
         path: oneof<nothing, path>, summary: oneof<nothing, string>,
-        subiters: oneof<
-            nothing, table<iter: path, summary: string, path: directory>
+        nest: oneof<
+            nothing,
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
         >
     >
 ] {
@@ -235,15 +242,16 @@ def iter_located [
     let index_file = (['.' 'iter' $top 'iter.yaml'] | path join)
     let index = (iter_index $repo_dir $index_file)
     if ($parts | length) == 1 {
-        mut subiters = []
+        mut subs = []
         for entry in $index.subiters {
             let namepath = ([$top $entry.sub] | str join '/')
-            let dir = (common repo_dir_iter $repo_dir $namepath)
-            $subiters = (
-                $subiters | append {iter: $namepath, summary: $entry.summary, path: $dir}
-            )
+            let sub_iter = {
+                sub: $"{iter:($namepath)}", summary: $entry.summary,
+                path: (common repo_dir_iter $repo_dir $namepath)
+            }
+            $subs = ($subs | append $sub_iter)
         }
-        return {path: $iter_dir, summary: $index.summary, subiters: $subiters}
+        return {path: $iter_dir, summary: $index.summary, nest: $subs}
     }
     let sub = ($parts | skip 1 | str join '/')
     let listed = ($index.subiters | where {|entry| $entry.sub == $sub })
@@ -253,7 +261,11 @@ def iter_located [
     if ($listed | length) > 1 {
         error make --unspanned $"sub ($sub) listed twice in ($index_file)"
     }
-    {path: $iter_dir, summary: ($listed | first | get summary), subiters: null}
+    let top_iter = {
+        top: $"{iter:($top)}", summary: $index.summary,
+        path: (common repo_dir_iter $repo_dir $top)
+    }
+    {path: $iter_dir, summary: ($listed | first | get summary), nest: $top_iter}
 }
 
 # A top iter's iter.yaml, its summary and its subiters, each held to its shape.
