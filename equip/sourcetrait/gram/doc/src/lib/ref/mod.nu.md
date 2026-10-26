@@ -7,11 +7,13 @@ it, so a ptr naming a missing file is refused.
 
 ## resolve
 
-Each ref as `located` reads it, its path and its summary beside it: a
-record for one ref, a table in the given order for a list, and nothing
-nested, no tasks and no `apply`. The refs are read in a loop rather than a
-closure, so a refused ref's own message is the error. `oneof<list<string>,
-string>` keeps the list first, as `protocol` and `sequence` do.
+Each ref as `located` reads it, its path, its summary, and a top iter's
+subiters beside it: a record for one ref, a table in the given order for a
+list. A top iter's `subiters` is the one table nested, every other ref's
+null, so every row has one shape; no tasks and no `apply`. The refs are
+read in a loop rather than a closure, so a refused ref's own message is the
+error. `oneof<list<string>, string>` keeps the list first, as `protocol`
+and `sequence` do.
 
 ## braced and braceless
 
@@ -33,12 +35,14 @@ lowercase kind, a colon, then a body without braces, gains its braces.
 A GramRef is `{kind:body}`. `none`, GramRef's null, names no file and has
 no summary, and neither has a `url` or any other kind outside those held. The
 kinds held: `log`, `protocol`, `sequence`, `mem`, `info`, `study`, `plan`,
-and `file`, with `proto` and `seq` read as `protocol` and `sequence`, the
-short names older refs carry. A log, protocol, or sequence ref resolves
-through the log, protocol, and sequence modules, so each index's checks
-keep one home: the entry listed once and its file present; its summary is
-that entry's. Their body splits at its last colon, so the iter takes either
-namepath separator, `foo/bar` or `foo:bar`.
+`file`, and `iter`, with `proto` and `seq` read as `protocol` and
+`sequence`, the short names older refs carry. An iter ref goes to
+`iter_located`, and every other kind's record gains a null `subiters`. A
+log, protocol, or sequence ref resolves through the log, protocol, and
+sequence modules, so each index's checks keep one home: the entry listed
+once and its file present; its summary is that entry's. Their body splits
+at its last colon, so the iter takes either namepath separator, `foo/bar`
+or `foo:bar`.
 
 An info ref names a GramInfo concept, `{info:foo/bar:Concept}`, the
 iter first, then the concept's path, then any header anchors, and a
@@ -80,6 +84,19 @@ campaign's capital; a body with none is a whole iter's tasking, its path
 the iter's `plan/` and no summary. A campaign's path and summary are `plan
 campaign`'s; a task's summary is `plan task`'s, and its path the nearest
 file holding it: its own, else its parent task's, up to its campaign's.
+
+## iter_located and iter_index
+
+An iter ref names an iter by its namepath, `{iter:foo}` or `{iter:foo/bar}`,
+either separator: its path is the iter's directory as `common repo_dir_iter`
+finds it, and its summary is its top iter's `iter.yaml`'s, the file's own
+`summary` for a top iter and its entry under `subiters` for a subiter. A
+top iter's record carries its `subiters`, each its namepath, its summary,
+and its directory, held to exist; a subiter's carries none. `iter_index`
+reads `iter.yaml` and refuses it missing, without a `summary`, or with a
+subiter lacking its `sub` or `summary`; a subiter the file lists twice or
+not at all is refused. The subiters are gathered in a loop, so a listed
+subiter's missing directory is refused by name.
 
 ## indexed_summary and listed_summary
 

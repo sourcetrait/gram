@@ -12,18 +12,24 @@ export def ref_filepath [
     located $ref | get path
 }
 
-# Each GramRef's path and indexed summary, a record or a table for a list.
+# Each GramRef's path and summary, a top iter's subiters, a record or a table.
 export def resolve [
     ref: oneof<list<string>, string>
 ]: [
     nothing -> oneof<
         record<
             ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>
+            summary: oneof<nothing, string>,
+            subiters: oneof<
+                nothing, table<iter: path, summary: string, path: directory>
+            >
         >,
         table<
             ref: string, path: oneof<nothing, path>,
-            summary: oneof<nothing, string>
+            summary: oneof<nothing, string>,
+            subiters: oneof<
+                nothing, table<iter: path, summary: string, path: directory>
+            >
         >
     >
 ] {
@@ -32,7 +38,10 @@ export def resolve [
     mut found = []
     for one in $refs {
         let at = (located $one)
-        let entry = {ref: $one, path: $at.path, summary: $at.summary}
+        let entry = {
+            ref: $one, path: $at.path, summary: $at.summary,
+            subiters: $at.subiters
+        }
         $found = ($found | append $entry)
     }
     if $single { $found | first } else { $found }
@@ -83,16 +92,19 @@ def one_braced [
     $"{($ref)}"
 }
 
-# A GramRef's file and the summary its index holds, each nothing where none is.
+# A GramRef's file, its index's summary, and a top iter's subiters, or nothing.
 def located [
     ref: string
 ]: [
     nothing -> record<
-        path: oneof<nothing, path>, summary: oneof<nothing, string>
+        path: oneof<nothing, path>, summary: oneof<nothing, string>,
+        subiters: oneof<
+            nothing, table<iter: path, summary: string, path: directory>
+        >
     >
 ] {
     if $ref == 'none' {
-        return {path: null, summary: null}
+        return {path: null, summary: null, subiters: null}
     }
     let parts = ($ref | parse --regex '^\{(?P<kind>[a-z]+):(?P<body>[^{}]+)\}$')
     if ($parts | is-empty) {
@@ -100,7 +112,10 @@ def located [
     }
     let kind = ($parts | first | get kind)
     let body = ($parts | first | get body)
-    match $kind {
+    if $kind == 'iter' {
+        return (iter_located $body)
+    }
+    let found = match $kind {
         'log' => {
             let named = (iter_and_name $ref $body)
             if not ($named.name =~ '^[0-9]+$') {
@@ -199,6 +214,71 @@ def located [
         }
         _ => {path: null, summary: null}
     }
+    $found | insert subiters null
+}
+
+# An iter's directory and its summary from its top iter's iter.yaml, its subiters.
+def iter_located [
+    body: string
+]: [
+    nothing -> record<
+        path: oneof<nothing, path>, summary: oneof<nothing, string>,
+        subiters: oneof<
+            nothing, table<iter: path, summary: string, path: directory>
+        >
+    >
+] {
+    let repo_dir = (repo repo_dir)
+    let iter_dir = (common repo_dir_iter $repo_dir $body)
+    let parts = ($body | split row --regex '[:/]')
+    let top = ($parts | first)
+    let index_file = (['.' 'iter' $top 'iter.yaml'] | path join)
+    let index = (iter_index $repo_dir $index_file)
+    if ($parts | length) == 1 {
+        mut subiters = []
+        for entry in $index.subiters {
+            let namepath = ([$top $entry.sub] | str join '/')
+            let dir = (common repo_dir_iter $repo_dir $namepath)
+            $subiters = (
+                $subiters | append {iter: $namepath, summary: $entry.summary, path: $dir}
+            )
+        }
+        return {path: $iter_dir, summary: $index.summary, subiters: $subiters}
+    }
+    let sub = ($parts | skip 1 | str join '/')
+    let listed = ($index.subiters | where {|entry| $entry.sub == $sub })
+    if ($listed | is-empty) {
+        error make --unspanned $"no sub ($sub) in ($index_file)"
+    }
+    if ($listed | length) > 1 {
+        error make --unspanned $"sub ($sub) listed twice in ($index_file)"
+    }
+    {path: $iter_dir, summary: ($listed | first | get summary), subiters: null}
+}
+
+# A top iter's iter.yaml, its summary and its subiters, each held to its shape.
+def iter_index [
+    repo_dir: directory
+    index_file: path
+]: nothing -> record<summary: string, subiters: table<sub: string, summary: string>> {
+    if not ($repo_dir | path join $index_file | path exists) {
+        error make --unspanned $"no index: ($index_file)"
+    }
+    let index = (open ($repo_dir | path join $index_file))
+    let summary = ($index | get -o summary)
+    if ($summary | describe) != 'string' {
+        error make --unspanned $"no summary in ($index_file)"
+    }
+    let subiters = ($index | get -o subiters | default [])
+    let malformed = ($subiters | where {|entry|
+        let named = (($entry | get -o sub | describe) == 'string')
+        let summarized = (($entry | get -o summary | describe) == 'string')
+        not ($named and $summarized)
+    })
+    if ($malformed | is-not-empty) {
+        error make --unspanned $"a subiter without its sub or summary in ($index_file)"
+    }
+    {summary: $summary, subiters: ($subiters | select sub summary)}
 }
 
 # A summary from an index, the one item whose key names the entry.
