@@ -20,3 +20,11 @@ models in the order asked under the kind's plural, `{iters}`, `{logs}`,
 `ref resolve` answers `{refs}`, since a call answers a record. A list of
 one is the single case, so no call is added for it and none takes
 `info()`'s room twice.
+
+A new takes its subjects the same way and answers what each made under the
+same plural: `new iter` a list of namepaths, `{iters}`, and `new log`, `new
+campaign`, and `new task` a table of each one's arguments, `{logs}`,
+`{campaigns}`, and `{tasks}`. They are made in order, each refused before
+its own first write, so a refusal stops the rest with the earlier ones
+made. `log prune`, `state advance`, and `state fresh` keep their one
+subject, being of special use.

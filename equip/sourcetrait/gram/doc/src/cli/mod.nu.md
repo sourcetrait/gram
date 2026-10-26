@@ -18,7 +18,15 @@ task`. `ref <ref>` reads one GramRef's path and indexed summary through
 table; the singular keeps the name `ref` rather than `get ref`. `log
 prune`, `state roll`, and `state fresh`, neither a get nor a new, stay
 under their kind; `state roll` calls `state advance`, `roll` being a
-builtin a library function never takes. Nothing reads `$in`.
+builtin a library function never takes.
+
+A get or a list, `ref` and `list ref` among them, takes its subject passed
+or piped, one way only: `gram get log log:foo:1` or `'log:foo:1' | gram get
+log`, and `[iter:foo iter:bar] | gram list iter`. `one_given` refuses both
+and neither, by the subject's name. A model's own refs, a top iter's
+`nest.sub` and a state's `last.ptr`, feed the next get, so the commands
+chain: `gram get iter iter:foo | get nest.sub | gram list iter`. Nothing
+else reads `$in`.
 
 Every wrapper imports its library module, `../lib/<concept>`, inside its own
 body. A module-level `use` would put a library command beside the wrapper of

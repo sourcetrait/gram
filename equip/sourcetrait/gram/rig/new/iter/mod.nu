@@ -1,6 +1,10 @@
 use equip/sourcetrait/gram/lib/iter
 
-# A new iter scaffolded: its empty indices, its fresh state, its empty bootstrap.
-export def main [args: record<iter: string>]: nothing -> record<iter: string, path: directory, files: list<path>> {
-    iter new $args.iter
+# New iters scaffolded in order, each with its indices, state, and bootstrap.
+export def main [args: record<iters: list<string>>]: nothing -> record<iters: table<iter: string, path: directory, files: list<path>>> {
+    mut made = []
+    for namepath in $args.iters {
+        $made = ($made | append (iter new $namepath))
+    }
+    { iters: $made }
 }

@@ -1,6 +1,10 @@
 use equip/sourcetrait/gram/lib/log
 
-# A new entry in an iter's log: its index item and a stub titled with its rev.
-export def main [args: record<iter: string, summary: string>]: nothing -> record<rev: int, summary: string, file: path> {
-    log new $args.iter $args.summary
+# New log entries in order: each one's index item and its stub titled by rev.
+export def main [args: record<logs: table<iter: string, summary: string>>]: nothing -> record<logs: table<rev: int, summary: string, file: path>> {
+    mut made = []
+    for entry in $args.logs {
+        $made = ($made | append (log new $entry.iter $entry.summary))
+    }
+    { logs: $made }
 }

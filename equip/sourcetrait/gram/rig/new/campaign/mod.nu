@@ -1,6 +1,13 @@
 use equip/sourcetrait/gram/lib/plan
 
-# A campaign scaffolded into a pool at criteria, as get campaign returns it.
-export def main [args: record<iter: string, pool: string, campaign: string, summary: string>]: nothing -> record<campaign: string, pool: string, summary: string, stage: string, tasks: table<task: string, summary: string>, file: path> {
-    plan new campaign $args.iter $args.pool $args.campaign $args.summary
+# New campaigns in order, each scaffolded into its pool at criteria.
+export def main [args: record<campaigns: table<iter: string, pool: string, campaign: string, summary: string>>]: nothing -> record<campaigns: table<campaign: string, pool: string, summary: string, stage: string, tasks: table<task: string, summary: string>, file: path>> {
+    mut made = []
+    for entry in $args.campaigns {
+        let one = (
+            plan new campaign $entry.iter $entry.pool $entry.campaign $entry.summary
+        )
+        $made = ($made | append $one)
+    }
+    { campaigns: $made }
 }

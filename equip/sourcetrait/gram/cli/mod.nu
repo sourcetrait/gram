@@ -18,7 +18,7 @@ export def main []: nothing -> string {
 
 # An iter's model by its GramRef: its namepath, directory, summary, and nest.
 export def "get iter" [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         iter: string, path: directory, summary: string,
@@ -27,15 +27,23 @@ export def "get iter" [
             table<sub: string, summary: string, path: directory>
         >
     >
+    string -> record<
+        iter: string, path: directory, summary: string,
+        nest: oneof<
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
+        >
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model iter (ref braced $ref)
+    model iter (ref braced $given)
 }
 
 # Iters' models by their GramRefs, a table in the order asked.
 export def "list iter" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         iter: string, path: directory, summary: string,
@@ -44,135 +52,189 @@ export def "list iter" [
             table<sub: string, summary: string, path: directory>
         >
     >
+    list<string> -> table<
+        iter: string, path: directory, summary: string,
+        nest: oneof<
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
+        >
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model iter (ref braced $refs)
+    model iter (ref braced $given)
 }
 
 # A log entry by its GramRef: its rev, its summary, and its file.
 export def "get log" [
-    ref: string
-]: nothing -> record<rev: int, summary: string, file: path> {
+    ref?: string
+]: [
+    nothing -> record<rev: int, summary: string, file: path>
+    string -> record<rev: int, summary: string, file: path>
+] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model log (ref braced $ref)
+    model log (ref braced $given)
 }
 
 # Log entries by their GramRefs, a table in the order asked.
 export def "list log" [
-    refs: list<string>
-]: nothing -> table<rev: int, summary: string, file: path> {
+    refs?: list<string>
+]: [
+    nothing -> table<rev: int, summary: string, file: path>
+    list<string> -> table<rev: int, summary: string, file: path>
+] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model log (ref braced $refs)
+    model log (ref braced $given)
 }
 
 # A campaign's index entry by its plan ref, with its pool and file.
 export def "get campaign" [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
         tasks: table<task: string, summary: string>, file: path
     >
+    string -> record<
+        campaign: string, pool: string, summary: string, stage: string,
+        tasks: table<task: string, summary: string>, file: path
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model campaign (ref braced $ref)
+    model campaign (ref braced $given)
 }
 
 # Campaigns' index entries by their plan refs, a table in the order asked.
 export def "list campaign" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         campaign: string, pool: string, summary: string, stage: string,
         tasks: table<task: string, summary: string>, file: path
     >
+    list<string> -> table<
+        campaign: string, pool: string, summary: string, stage: string,
+        tasks: table<task: string, summary: string>, file: path
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model campaign (ref braced $refs)
+    model campaign (ref braced $given)
 }
 
 # A task's index entry by its plan ref, with its campaign, pool, and file.
 export def "get task" [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
         stage: string, tasks: table<task: string, summary: string>,
         file: oneof<nothing, path>
     >
+    string -> record<
+        task: string, campaign: string, pool: string, summary: string,
+        stage: string, tasks: table<task: string, summary: string>,
+        file: oneof<nothing, path>
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model task (ref braced $ref)
+    model task (ref braced $given)
 }
 
 # Tasks' index entries by their plan refs, a table in the order asked.
 export def "list task" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         task: string, campaign: string, pool: string, summary: string,
         stage: string, tasks: table<task: string, summary: string>,
         file: oneof<nothing, path>
     >
+    list<string> -> table<
+        task: string, campaign: string, pool: string, summary: string,
+        stage: string, tasks: table<task: string, summary: string>,
+        file: oneof<nothing, path>
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model task (ref braced $refs)
+    model task (ref braced $given)
 }
 
 # A sequence by its GramRef: its name, its summary, and its file.
 export def "get sequence" [
-    ref: string
-]: nothing -> record<name: string, summary: string, file: path> {
+    ref?: string
+]: [
+    nothing -> record<name: string, summary: string, file: path>
+    string -> record<name: string, summary: string, file: path>
+] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model sequence (ref braced $ref)
+    model sequence (ref braced $given)
 }
 
 # Sequences by their GramRefs, a table in the order asked.
 export def "list sequence" [
-    refs: list<string>
-]: nothing -> table<name: string, summary: string, file: path> {
+    refs?: list<string>
+]: [
+    nothing -> table<name: string, summary: string, file: path>
+    list<string> -> table<name: string, summary: string, file: path>
+] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model sequence (ref braced $refs)
+    model sequence (ref braced $given)
 }
 
 # A protocol by its GramRef: its name, summary, conditions, and file.
 export def "get protocol" [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         name: string, summary: string, apply: table<on: string>, file: path
     >
+    string -> record<
+        name: string, summary: string, apply: table<on: string>, file: path
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model protocol (ref braced $ref)
+    model protocol (ref braced $given)
 }
 
 # Protocols by their GramRefs, a table in the order asked.
 export def "list protocol" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         name: string, summary: string, apply: table<on: string>, file: path
     >
+    list<string> -> table<
+        name: string, summary: string, apply: table<on: string>, file: path
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model protocol (ref braced $refs)
+    model protocol (ref braced $given)
 }
 
 # An iter's next, now, and last states by its iter ref, in one record.
 export def "get state" [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         next: record<
@@ -185,15 +247,27 @@ export def "get state" [
             rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
         >
     >
+    string -> record<
+        next: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        now: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        last: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/model
     use ../lib/ref
-    model state (ref braced $ref)
+    model state (ref braced $given)
 }
 
 # Iters' states by their iter refs, a table in the order asked.
 export def "list state" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         next: record<
@@ -206,10 +280,22 @@ export def "list state" [
             rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
         >
     >
+    list<string> -> table<
+        next: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        now: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        last: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/model
     use ../lib/ref
-    model state (ref braced $refs)
+    model state (ref braced $given)
 }
 
 # New iters, log entries, campaigns, and tasks, each scaffolded.
@@ -281,28 +367,38 @@ export def "log prune" [
 
 # A GramRef's path and indexed summary, the ref braced or braceless.
 export def ref [
-    ref: string
+    ref?: string
 ]: [
     nothing -> record<
         ref: string, path: oneof<nothing, path>,
         summary: oneof<nothing, string>
     >
+    string -> record<
+        ref: string, path: oneof<nothing, path>,
+        summary: oneof<nothing, string>
+    >
 ] {
+    let given = (one_given $ref $in 'ref')
     use ../lib/ref
-    ref resolve (ref braced $ref)
+    ref resolve (ref braced $given)
 }
 
 # GramRefs' paths and indexed summaries, a table in the order asked.
 export def "list ref" [
-    refs: list<string>
+    refs?: list<string>
 ]: [
     nothing -> table<
         ref: string, path: oneof<nothing, path>,
         summary: oneof<nothing, string>
     >
+    list<string> -> table<
+        ref: string, path: oneof<nothing, path>,
+        summary: oneof<nothing, string>
+    >
 ] {
+    let given = (one_given $refs $in 'refs')
     use ../lib/ref
-    ref resolve (ref braced $refs)
+    ref resolve (ref braced $given)
 }
 
 # An iter's GramState.
@@ -326,4 +422,19 @@ export def "state fresh" [
 ]: nothing -> int {
     use ../lib/state
     state fresh $iter
+}
+
+# A get's or a list's subject, passed or piped, refused both ways or neither.
+def one_given [
+    passed: any
+    piped: any
+    what: string
+]: nothing -> any {
+    if ($passed != null) and ($piped != null) {
+        error make --unspanned $"give the ($what) by argument or by pipe, not both"
+    }
+    if ($passed == null) and ($piped == null) {
+        error make --unspanned $"no ($what) given, by argument or by pipe"
+    }
+    if $passed != null { $passed } else { $piped }
 }
