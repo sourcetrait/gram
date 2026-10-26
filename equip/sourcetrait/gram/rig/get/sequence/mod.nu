@@ -1,6 +1,7 @@
-use equip/sourcetrait/gram/lib/sequence
+use equip/sourcetrait/gram/lib/model
+use equip/sourcetrait/gram/lib/ref
 
-# Sequences by name: each one's summary and its file.
-export def main [args: record<iter: string, sequences: list<string>>]: nothing -> record<sequences: table<name: string, summary: string, file: path>> {
-    { sequences: (sequence $args.iter $args.sequences) }
+# Sequences by their GramRefs: each one's name, summary, and file.
+export def main [args: record<refs: list<string>>]: nothing -> record<sequences: table<name: string, summary: string, file: path>> {
+    { sequences: (model sequence (ref braced $args.refs)) }
 }

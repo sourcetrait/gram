@@ -7,19 +7,17 @@ it out. The module's directory is `cli`, so a plain `use` would name it
 `cli`, while its listing and its help groups look for `gram`. `--reload`
 re-reads gram's code, which an overlay binds at parse time.
 
-A command leads with its verb: `get <kind>` reads a kind's concrete model,
-`new <kind>` scaffolds one, and `ref` reads any GramRef's generic model, its
-`actual` the kind's own part where it has one; `log prune`, `state roll`,
-and `state fresh`, neither a get nor a new, stay under their kind. Each
-wraps one library function: `get iter` calls `iter`, `get log` `log`, `get
-campaign` and `get task` `plan campaign` and `plan task`, `get state` `state
-states`, `get sequence` `sequence`, and `get protocol` `protocol`; `new
-iter` calls `iter new`, `new log` `log new`, and `new campaign` and `new
-task` `plan new campaign` and `plan new task`; `state roll` calls `state
-advance`, `roll` being a builtin a library function never takes; and `ref`
-calls `ref resolve`. A one-or-many subject is one argument, a value or a
-list literal, `gram get log foo [3 4]`, a record back for one and a table
-for a list; `get log` with no rev reads the newest entry. Nothing reads
+A command leads with its verb. `get <kind> <ref>` reads one concrete model
+by one GramRef, a record, and `list <kind> <refs>` reads them by a list, a
+table in the order asked, the kinds `iter`, `log`, `campaign`, `task`,
+`sequence`, `protocol`, and `state`, each pair wrapping `model <kind>`.
+`new <kind>` scaffolds one: `new iter` calls `iter new`, `new log` `log
+new`, and `new campaign` and `new task` `plan new campaign` and `plan new
+task`. `ref` reads GramRefs' generic model through `ref resolve`, a record
+for one and a table for a list literal, its `actual` the kind's own part
+where it has one. `log prune`, `state roll`, and `state fresh`, neither a
+get nor a new, stay under their kind; `state roll` calls `state advance`,
+`roll` being a builtin a library function never takes. Nothing reads
 `$in`.
 
 Every wrapper imports its library module, `../lib/<concept>`, inside its own
@@ -33,14 +31,15 @@ scope, so this module's commands bind there too: a `get <kind>` command
 takes any `get` of a field that kind names, and `get iter` in a library is
 this module's `get iter`, a parse failure on its missing argument when
 measured. A library reads such a field by its cell path, `($row).iter`. No
-command is named `get` alone, which would take every `get`; `new`, `log`,
-and `state` print nu's help, which lists their subcommands.
+command is named `get` alone, which would take every `get`, nor `list`, its
+plural; `new`, `log`, and `state` print nu's help, which lists their
+subcommands.
 
-`ref` and `state roll` take a GramRef braced or braceless, `gram ref
-log:foo/bar:32` or `gram ref [log:foo:1 mem:Topic]`, and brace it through
-`ref braced`: nu refuses an unquoted braced ref of two or more colons and
-reads one of one colon as a record. A ref with a `#` tail still takes
-quotes, `#` opening a comment.
+`get`, `list`, `ref`, and `state roll` take GramRefs braced or braceless,
+`gram get log log:foo/bar:32` or `gram list log [log:foo:1 log:foo:2]`, and
+brace them through `ref braced`: nu refuses an unquoted braced ref of two
+or more colons and reads one of one colon as a record. A ref with a `#`
+tail still takes quotes, `#` opening a comment.
 
 `gram` alone lists every command with its summary: the commands of the
 module named `gram`, by their declarations in `scope modules`, each named as

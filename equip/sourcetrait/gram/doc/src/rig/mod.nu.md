@@ -13,11 +13,10 @@ of its name in its parent, so a call takes the library's name where the
 CLI's is a builtin, `state advance` for `state roll`, and the CLI's `ref` is
 `ref resolve`. A roll's new rev rides in `{rev}`.
 
-The CLI's one-or-many subjects take a list here, `get log`'s `revs`, `ref
-resolve`'s `refs`, and `get sequence`'s `sequences` and `get protocol`'s
-`protocols`: a list where the subject is a scalar, as each of these is, and
-a table where it is a record. Each answers a table of the single's records,
-in the order asked, inside a record, since a call answers a record. A list
-of one is the single case, so no call is added for it and none takes
-`info()`'s room twice. `get log`'s empty `revs` reads the newest entry
-alone, as the CLI's `get log` with no rev.
+The CLI's singular and plural are one call here, which takes a list and
+answers a table: a get takes its refs, `{refs}`, and answers its kind's
+models in the order asked under the kind's plural, `{iters}`, `{logs}`,
+`{campaigns}`, `{tasks}`, `{sequences}`, `{protocols}`, or `{states}`, as
+`ref resolve` answers `{refs}`, since a call answers a record. A list of
+one is the single case, so no call is added for it and none takes
+`info()`'s room twice.

@@ -31,6 +31,14 @@ braces what it is given before the library sees it.
 A ref already braced, or `none`, comes back as it is; a braceless one, a
 lowercase kind, a colon, then a body without braces, gains its braces.
 
+## kind_body and iter_and_name
+
+`kind_body` splits a braced ref into its kind and body, refusing anything
+else, and `iter_and_name` splits a body at its last colon, its iter's
+namepath before it in either separator, `foo/bar:32` or `foo:bar:32`.
+`located` reads a ref through them, and `model` too, so a ref is split one
+way wherever it is read.
+
 ## located
 
 A GramRef is `{kind:body}`. `none`, GramRef's null, names no file and has

@@ -1,6 +1,7 @@
-use equip/sourcetrait/gram/lib/plan
+use equip/sourcetrait/gram/lib/model
+use equip/sourcetrait/gram/lib/ref
 
-# A campaign's index entry from whichever pool lists it, with its pool and file.
-export def main [args: record<iter: string, campaign: string>]: nothing -> record<campaign: string, pool: string, summary: string, stage: string, tasks: table<task: string, summary: string>, file: path> {
-    plan campaign $args.iter $args.campaign
+# Campaigns' index entries by their plan refs, each with its pool and file.
+export def main [args: record<refs: list<string>>]: nothing -> record<campaigns: table<campaign: string, pool: string, summary: string, stage: string, tasks: table<task: string, summary: string>, file: path>> {
+    { campaigns: (model campaign (ref braced $args.refs)) }
 }

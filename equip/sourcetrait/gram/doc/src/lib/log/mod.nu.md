@@ -3,11 +3,6 @@
 `common` and `repo` are imported by relative paths, which nushell resolves
 against the importing file, so they are found wherever gram is loaded from.
 
-## main
-
-The CLI's and the rig's `get log`: no rev reads `latest`, and an int or a
-list of them `rev`, so both read an iter's log through one function.
-
 ## latest
 
 Named `latest` rather than `last`: `last` is a builtin, and a module's

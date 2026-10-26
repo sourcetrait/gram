@@ -83,6 +83,17 @@ export def braceless [
     if $single { $found | first } else { $found }
 }
 
+# A braced GramRef's kind and body, refused unless it is one.
+export def kind_body [
+    ref: string
+]: nothing -> record<kind: string, body: string> {
+    let found = ($ref | parse --regex '^\{(?P<kind>[a-z]+):(?P<body>[^{}]+)\}$')
+    if ($found | is-empty) {
+        error make --unspanned $"not a GramRef: '($ref)'"
+    }
+    $found | first
+}
+
 # One GramRef braced, none as itself, refused unless it holds either form.
 def one_braced [
     ref: string
@@ -112,12 +123,9 @@ def located [
     if $ref == 'none' {
         return {path: null, summary: null, actual: null}
     }
-    let parts = ($ref | parse --regex '^\{(?P<kind>[a-z]+):(?P<body>[^{}]+)\}$')
-    if ($parts | is-empty) {
-        error make --unspanned $"not a GramRef: '($ref)'"
-    }
-    let kind = ($parts | first | get kind)
-    let body = ($parts | first | get body)
+    let parts = (kind_body $ref)
+    let kind = $parts.kind
+    let body = $parts.body
     if $kind == 'iter' {
         let model = (iter $body)
         return {path: $model.path, summary: $model.summary, actual: $model.nest}
@@ -297,7 +305,7 @@ def plan_located [
 }
 
 # A GramRef's body split at its last colon into an iter namepath and a name.
-def iter_and_name [
+export def iter_and_name [
     ref: string
     body: string
 ]: nothing -> record<iter: string, name: string> {

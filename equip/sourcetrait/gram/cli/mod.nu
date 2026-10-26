@@ -16,9 +16,9 @@ export def main []: nothing -> string {
     [$head.description '' 'Commands:' ...$listed] | str join (char nl)
 }
 
-# An iter's model: its namepath, its directory, its summary, and its nest.
+# An iter's model by its GramRef: its namepath, directory, summary, and nest.
 export def "get iter" [
-    iter: string
+    ref: string
 ]: [
     nothing -> record<
         iter: string, path: directory, summary: string,
@@ -28,42 +28,77 @@ export def "get iter" [
         >
     >
 ] {
-    use ../lib/iter
-    iter $iter
+    use ../lib/model
+    use ../lib/ref
+    model iter (ref braced $ref)
 }
 
-# The newest entry in an iter's log, or entries by rev, a record or a table.
-export def "get log" [
-    iter: string
-    rev?: oneof<int, list<int>>
+# Iters' models by their GramRefs, a table in the order asked.
+export def "list iter" [
+    refs: list<string>
 ]: [
-    nothing -> oneof<
-        record<rev: int, summary: string, file: path>,
-        table<rev: int, summary: string, file: path>
+    nothing -> table<
+        iter: string, path: directory, summary: string,
+        nest: oneof<
+            record<top: string, summary: string, path: directory>,
+            table<sub: string, summary: string, path: directory>
+        >
     >
 ] {
-    use ../lib/log
-    log $iter $rev
+    use ../lib/model
+    use ../lib/ref
+    model iter (ref braced $refs)
 }
 
-# A campaign's index entry from whichever pool lists it, with its pool and file.
+# A log entry by its GramRef: its rev, its summary, and its file.
+export def "get log" [
+    ref: string
+]: nothing -> record<rev: int, summary: string, file: path> {
+    use ../lib/model
+    use ../lib/ref
+    model log (ref braced $ref)
+}
+
+# Log entries by their GramRefs, a table in the order asked.
+export def "list log" [
+    refs: list<string>
+]: nothing -> table<rev: int, summary: string, file: path> {
+    use ../lib/model
+    use ../lib/ref
+    model log (ref braced $refs)
+}
+
+# A campaign's index entry by its plan ref, with its pool and file.
 export def "get campaign" [
-    iter: string
-    campaign: string
+    ref: string
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
         tasks: table<task: string, summary: string>, file: path
     >
 ] {
-    use ../lib/plan
-    plan campaign $iter $campaign
+    use ../lib/model
+    use ../lib/ref
+    model campaign (ref braced $ref)
 }
 
-# A task's index entry by its plan namepath, with its campaign, pool, and file.
+# Campaigns' index entries by their plan refs, a table in the order asked.
+export def "list campaign" [
+    refs: list<string>
+]: [
+    nothing -> table<
+        campaign: string, pool: string, summary: string, stage: string,
+        tasks: table<task: string, summary: string>, file: path
+    >
+] {
+    use ../lib/model
+    use ../lib/ref
+    model campaign (ref braced $refs)
+}
+
+# A task's index entry by its plan ref, with its campaign, pool, and file.
 export def "get task" [
-    iter: string
-    task: string
+    ref: string
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
@@ -71,13 +106,73 @@ export def "get task" [
         file: oneof<nothing, path>
     >
 ] {
-    use ../lib/plan
-    plan task $iter $task
+    use ../lib/model
+    use ../lib/ref
+    model task (ref braced $ref)
 }
 
-# An iter's next, now, and last states in one record.
+# Tasks' index entries by their plan refs, a table in the order asked.
+export def "list task" [
+    refs: list<string>
+]: [
+    nothing -> table<
+        task: string, campaign: string, pool: string, summary: string,
+        stage: string, tasks: table<task: string, summary: string>,
+        file: oneof<nothing, path>
+    >
+] {
+    use ../lib/model
+    use ../lib/ref
+    model task (ref braced $refs)
+}
+
+# A sequence by its GramRef: its name, its summary, and its file.
+export def "get sequence" [
+    ref: string
+]: nothing -> record<name: string, summary: string, file: path> {
+    use ../lib/model
+    use ../lib/ref
+    model sequence (ref braced $ref)
+}
+
+# Sequences by their GramRefs, a table in the order asked.
+export def "list sequence" [
+    refs: list<string>
+]: nothing -> table<name: string, summary: string, file: path> {
+    use ../lib/model
+    use ../lib/ref
+    model sequence (ref braced $refs)
+}
+
+# A protocol by its GramRef: its name, summary, conditions, and file.
+export def "get protocol" [
+    ref: string
+]: [
+    nothing -> record<
+        name: string, summary: string, apply: table<on: string>, file: path
+    >
+] {
+    use ../lib/model
+    use ../lib/ref
+    model protocol (ref braced $ref)
+}
+
+# Protocols by their GramRefs, a table in the order asked.
+export def "list protocol" [
+    refs: list<string>
+]: [
+    nothing -> table<
+        name: string, summary: string, apply: table<on: string>, file: path
+    >
+] {
+    use ../lib/model
+    use ../lib/ref
+    model protocol (ref braced $refs)
+}
+
+# An iter's next, now, and last states by its iter ref, in one record.
 export def "get state" [
-    iter: string
+    ref: string
 ]: [
     nothing -> record<
         next: record<
@@ -91,40 +186,30 @@ export def "get state" [
         >
     >
 ] {
-    use ../lib/state
-    state states $iter
+    use ../lib/model
+    use ../lib/ref
+    model state (ref braced $ref)
 }
 
-# A sequence by name, or a table of them by a list of names.
-export def "get sequence" [
-    iter: string
-    sequence: oneof<list<string>, string>
+# Iters' states by their iter refs, a table in the order asked.
+export def "list state" [
+    refs: list<string>
 ]: [
-    nothing -> oneof<
-        record<name: string, summary: string, file: path>,
-        table<name: string, summary: string, file: path>
-    >
-] {
-    use ../lib/sequence
-    sequence $iter $sequence
-}
-
-# A protocol by name, or a table of them by a list of names.
-export def "get protocol" [
-    iter: string
-    protocol: oneof<list<string>, string>
-]: [
-    nothing -> oneof<
-        record<
-            name: string, summary: string, apply: table<on: string>, file: path
+    nothing -> table<
+        next: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
         >,
-        table<
-            name: string, summary: string, apply: table<on: string>, file: path
+        now: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
+        >,
+        last: record<
+            rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>
         >
     >
 ] {
-    use ../lib/protocol
-    protocol $iter $protocol
+    use ../lib/model
+    use ../lib/ref
+    model state (ref braced $refs)
 }
 
 # New iters, log entries, campaigns, and tasks, each scaffolded.

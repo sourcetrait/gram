@@ -1,6 +1,7 @@
-use equip/sourcetrait/gram/lib/state
+use equip/sourcetrait/gram/lib/model
+use equip/sourcetrait/gram/lib/ref
 
-# An iter's next, now, and last states in one record.
-export def main [args: record<iter: string>]: nothing -> record<next: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>, now: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>, last: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>> {
-    state states $args.iter
+# Iters' next, now, and last states by their iter refs.
+export def main [args: record<refs: list<string>>]: nothing -> record<states: table<next: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>, now: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>, last: record<rev: int, ptr: oneof<nothing, string>, file: oneof<nothing, path>>>> {
+    { states: (model state (ref braced $args.refs)) }
 }

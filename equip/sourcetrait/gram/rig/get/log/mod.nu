@@ -1,11 +1,7 @@
-use equip/sourcetrait/gram/lib/log
+use equip/sourcetrait/gram/lib/model
+use equip/sourcetrait/gram/lib/ref
 
-# An iter's log entries by rev in the order asked, the newest for none asked.
-export def main [args: record<iter: string, revs: list<int>>]: nothing -> record<entries: table<rev: int, summary: string, file: path>> {
-    let entries = if ($args.revs | is-empty) {
-        [(log $args.iter)]
-    } else {
-        log $args.iter $args.revs
-    }
-    { entries: $entries }
+# Log entries by their GramRefs: each one's rev, summary, and file.
+export def main [args: record<refs: list<string>>]: nothing -> record<logs: table<rev: int, summary: string, file: path>> {
+    { logs: (model log (ref braced $args.refs)) }
 }
