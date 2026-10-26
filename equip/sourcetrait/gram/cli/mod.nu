@@ -16,6 +16,19 @@ export def main []: nothing -> string {
     [$head.description '' 'Commands:' ...$listed] | str join (char nl)
 }
 
+# An iter's GramIter.
+export def iter []: nothing -> string {
+    help gram iter
+}
+
+# A new iter scaffolded: its empty indices, its fresh state, its empty bootstrap.
+export def "iter new" [
+    iter: string
+]: nothing -> record<iter: string, path: directory, files: list<path>> {
+    use ../lib/iter
+    iter new $iter
+}
+
 # An iter's GramLog.
 export def log []: nothing -> string {
     help gram log

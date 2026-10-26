@@ -1,4 +1,5 @@
-# GramGov's calls: an iter's log, plan, refs, sequences, protocols, and state.
+# GramGov's calls: an iter's scaffold, log, plan, refs, sequences, protocols, and state.
+export module iter
 export module log
 export module plan
 export module protocol

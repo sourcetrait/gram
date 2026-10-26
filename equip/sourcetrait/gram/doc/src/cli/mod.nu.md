@@ -32,5 +32,5 @@ module named `gram`, by their declarations in `scope modules`, each named as
 the session has it, `gram log rev` under the prefix. nu's `gram --help`
 cannot list them, since it looks for subcommands of the def's own name,
 `main`, and a module's `main` takes no `--help` of its own; its summary line
-points to `gram`. `log`, `plan`, `plan new`, and `state` print nu's help,
-which lists their subcommands.
+points to `gram`. `iter`, `log`, `plan`, `plan new`, and `state` print
+nu's help, which lists their subcommands.
