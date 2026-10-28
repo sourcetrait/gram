@@ -2,8 +2,9 @@
 
 ## campaign
 
-The entry keeps its own fields; an entry with no stage reads as criteria,
-and one with no tasks has none. The campaign's file is checked to exist.
+The entry keeps its own fields, its tasks read by `child_tasks`; an entry
+with no stage reads as criteria, and one with no tasks has none. The
+campaign's file is checked to exist.
 
 ## task
 
@@ -13,7 +14,8 @@ and at least two parts (`task_names`). The walk goes through the campaign's
 index entry, a name missing or listed twice among its siblings refused with
 the path walked so far (`walk_tasks`). A task's file sits at its namepath
 under the pool, but not every task has one, its details then in its campaign's
-file, so `file` is null where none is held.
+file, so `file` is null where none is held. Its stage and tasks are read as
+`campaign` reads them.
 
 ## new campaign and new task
 
@@ -27,6 +29,14 @@ present. A task's name may recur further down its campaign,
 `Something/Plan/Something/Plan`. The stub, `# CAMPAIGN: <name>` or
 `# TASK: <name>`, is written before the pool, so the pool never names a
 missing file. Each returns what `campaign` or `task` reads back.
+
+## child_tasks
+
+An entry's tasks are its children as index entries, each its name, its
+summary, and its stage, criteria where none is written, as the entry's own.
+A child's own tasks are left to its `task`: a pool's tree runs as deep as its
+work, and a call's result type is finite, every field declared at every
+depth, so a child carried whole could not be typed.
 
 ## read_pool and write_pool
 

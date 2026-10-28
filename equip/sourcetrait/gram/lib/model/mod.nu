@@ -61,11 +61,13 @@ export def campaign [
     nothing -> oneof<
         record<
             campaign: string, pool: string, summary: string, stage: string,
-            tasks: table<task: string, summary: string>, file: path
+            tasks: table<task: string, summary: string, stage: string>,
+            file: path
         >,
         table<
             campaign: string, pool: string, summary: string, stage: string,
-            tasks: table<task: string, summary: string>, file: path
+            tasks: table<task: string, summary: string, stage: string>,
+            file: path
         >
     >
 ] {
@@ -90,12 +92,14 @@ export def task [
     nothing -> oneof<
         record<
             task: string, campaign: string, pool: string, summary: string,
-            stage: string, tasks: table<task: string, summary: string>,
+            stage: string,
+            tasks: table<task: string, summary: string, stage: string>,
             file: oneof<nothing, path>
         >,
         table<
             task: string, campaign: string, pool: string, summary: string,
-            stage: string, tasks: table<task: string, summary: string>,
+            stage: string,
+            tasks: table<task: string, summary: string, stage: string>,
             file: oneof<nothing, path>
         >
     >

@@ -98,11 +98,11 @@ export def "get campaign" [
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
     string -> record<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
 ] {
     let given = (one_given $ref $in 'ref')
@@ -117,11 +117,11 @@ export def "list campaign" [
 ]: [
     nothing -> table<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
     list<string> -> table<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
 ] {
     let given = (one_given $refs $in 'refs')
@@ -136,12 +136,14 @@ export def "get task" [
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
     string -> record<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
 ] {
@@ -157,12 +159,14 @@ export def "list task" [
 ]: [
     nothing -> table<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
     list<string> -> table<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
 ] {
@@ -329,7 +333,7 @@ export def "new campaign" [
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
 ] {
     use ../lib/plan
@@ -344,7 +348,8 @@ export def "new task" [
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
 ] {

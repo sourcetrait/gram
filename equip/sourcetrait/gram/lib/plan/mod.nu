@@ -8,7 +8,7 @@ export def campaign [
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
 ] {
     let found = (find_campaign $iter $campaign)
@@ -19,7 +19,7 @@ export def campaign [
         pool: $found.pool
         summary: $found.item.summary
         stage: ($found.item.stage? | default 'criteria')
-        tasks: ($found.item.tasks? | default [])
+        tasks: (child_tasks $found.item)
         file: $file
     }
 }
@@ -31,7 +31,8 @@ export def task [
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
 ] {
@@ -49,7 +50,7 @@ export def task [
         pool: $found.pool
         summary: $entry.summary
         stage: ($entry.stage? | default 'criteria')
-        tasks: ($entry.tasks? | default [])
+        tasks: (child_tasks $entry)
         file: (if $held { $file } else { null })
     }
 }
@@ -63,7 +64,7 @@ export def "new campaign" [
 ]: [
     nothing -> record<
         campaign: string, pool: string, summary: string, stage: string,
-        tasks: table<task: string, summary: string>, file: path
+        tasks: table<task: string, summary: string, stage: string>, file: path
     >
 ] {
     common check_summary $summary 'plan'
@@ -110,7 +111,8 @@ export def "new task" [
 ]: [
     nothing -> record<
         task: string, campaign: string, pool: string, summary: string,
-        stage: string, tasks: table<task: string, summary: string>,
+        stage: string,
+        tasks: table<task: string, summary: string, stage: string>,
         file: oneof<nothing, path>
     >
 ] {
@@ -187,6 +189,19 @@ def walk_tasks [
         $walked = ($walked | append $name)
     }
     $entry
+}
+
+# An entry's own tasks as index entries, each with its stage, criteria where none.
+def child_tasks [
+    entry: record
+]: nothing -> table<task: string, summary: string, stage: string> {
+    $entry.tasks? | default [] | each {|child|
+        {
+            task: $child.task
+            summary: $child.summary
+            stage: ($child.stage? | default 'criteria')
+        }
+    }
 }
 
 # The items with a task added under the entry the names reach, its key first.
