@@ -18,7 +18,7 @@ export def campaign [
         campaign: $found.item.campaign
         pool: $found.pool
         summary: $found.item.summary
-        stage: ($found.item.stage? | default 'criteria')
+        stage: $found.item.stage
         tasks: (child_tasks $found.item)
         file: $file
     }
@@ -49,7 +49,7 @@ export def task [
         campaign: $found.item.campaign
         pool: $found.pool
         summary: $entry.summary
-        stage: ($entry.stage? | default 'criteria')
+        stage: $entry.stage
         tasks: (child_tasks $entry)
         file: (if $held { $file } else { null })
     }
@@ -191,16 +191,12 @@ def walk_tasks [
     $entry
 }
 
-# An entry's own tasks as index entries, each with its stage, criteria where none.
+# An entry's own tasks as index entries, each its name, summary, and stage.
 def child_tasks [
     entry: record
 ]: nothing -> table<task: string, summary: string, stage: string> {
     $entry.tasks? | default [] | each {|child|
-        {
-            task: $child.task
-            summary: $child.summary
-            stage: ($child.stage? | default 'criteria')
-        }
+        {task: $child.task, summary: $child.summary, stage: $child.stage}
     }
 }
 
@@ -234,6 +230,7 @@ def read_pool [
             $"($index_file) is not as to yaml writes it; rewriting would reformat it"
         )
     }
+    require_stages $index_file $items
     $items
 }
 
@@ -250,21 +247,57 @@ def write_pool [
     $text | save --force ($repo_dir | path join $index_file)
 }
 
+# A pool's items refused when an entry or a task among them has no stage.
+def require_stages [
+    index_file: path
+    items: list<any>
+]: nothing -> nothing {
+    let missing = (stageless $items '')
+    if ($missing | is-not-empty) {
+        error make --unspanned $"($index_file): no stage on ($missing | str join ', ')"
+    }
+}
+
+# The plan namepaths under `above` of the entries and tasks with no stage.
+def stageless [
+    entries: list<any>
+    above: string
+]: nothing -> list<string> {
+    $entries | each {|entry|
+        let name = ($entry | get -o campaign | default ($entry | get -o task))
+        let path = if ($above | is-empty) { $name } else { $"($above)/($name)" }
+        let own = if ('stage' in ($entry | columns)) { [] } else { [$path] }
+        $own ++ (stageless ($entry.tasks? | default []) $path)
+    } | flatten
+}
+
 # The pools listing a campaign, each with its entry; empty when none does.
 def list_campaign [
     repo_dir: directory
     iter_dir: path
     campaign: string
 ]: nothing -> list<record> {
-    glob ($repo_dir | path join $iter_dir 'plan' '*.yaml')
-    | each {|path| $path | path basename }
-    | sort
-    | each {|pool_file|
-        let pool = ($pool_file | str replace --regex '\.yaml$' '')
-        let index_file = ($iter_dir | path join 'plan' $pool_file)
-        common read_index $repo_dir $index_file
+    let pools = (
+        glob ($repo_dir | path join $iter_dir 'plan' '*.yaml')
+        | each {|path| $path | path basename }
+        | sort
+        | each {|pool_file|
+            let index_file = ($iter_dir | path join 'plan' $pool_file)
+            {
+                pool: ($pool_file | str replace --regex '\.yaml$' '')
+                index_file: $index_file
+                items: (common read_index $repo_dir $index_file)
+            }
+        }
+    )
+    for pool in $pools {
+        require_stages $pool.index_file $pool.items
+    }
+    $pools
+    | each {|pool|
+        $pool.items
         | where {|item| ($item | get -o campaign) == $campaign }
-        | each {|item| {pool: $pool, item: $item} }
+        | each {|item| {pool: $pool.pool, item: $item} }
     }
     | flatten
 }

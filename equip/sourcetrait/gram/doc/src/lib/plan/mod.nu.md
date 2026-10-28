@@ -2,9 +2,8 @@
 
 ## campaign
 
-The entry keeps its own fields, its tasks read by `child_tasks`; an entry
-with no stage reads as criteria, and one with no tasks has none. The
-campaign's file is checked to exist.
+The entry keeps its own fields, its tasks read by `child_tasks`, and one
+with no tasks has none. The campaign's file is checked to exist.
 
 ## task
 
@@ -33,10 +32,9 @@ missing file. Each returns what `campaign` or `task` reads back.
 ## child_tasks
 
 An entry's tasks are its children as index entries, each its name, its
-summary, and its stage, criteria where none is written, as the entry's own.
-A child's own tasks are left to its `task`: a pool's tree runs as deep as its
-work, and a call's result type is finite, every field declared at every
-depth, so a child carried whole could not be typed.
+summary, and its stage. A child's own tasks are left to its `task`: a pool's
+tree runs as deep as its work, and a call's result type is finite, every
+field declared at every depth, so a child carried whole could not be typed.
 
 ## read_pool and write_pool
 
@@ -46,6 +44,16 @@ within 80 characters and quoted only where YAML needs it; one that is not
 is refused before anything changes, since rewriting it would reformat
 lines no one asked to touch. The text written is checked to read back as
 the items it came from.
+
+## require_stages and stageless
+
+Every entry and every task in a pool carries its stage (User). A pool is
+checked whole each time it is read, by `list_campaign` for a reader and by
+`read_pool` for a writer, so an entry or a task with none is refused by its
+plan namepath, every one named, before any answer or any write.
+`list_campaign` checks its pools in a loop once they are read, not in the
+closure reading them, so the refusal is the error itself rather than
+nushell's wrapper around a closure's.
 
 ## list_campaign and find_campaign
 
