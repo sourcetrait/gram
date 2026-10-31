@@ -24,17 +24,17 @@ const BOOT_FILES = [
     'state/now.yaml'
     'state/next.yaml'
     'state/last.yaml'
-    'log/log.yaml'
+    'sequence/sequence.yaml'
+    'protocol/protocol.yaml'
     'info/info.yaml'
     'plan/agenda.yaml'
     'plan/defer.yaml'
     'plan/roadmap.yaml'
     'plan/debt.yaml'
     'plan/maybe.yaml'
-    'protocol/protocol.yaml'
-    'quote/quote.yaml'
-    'sequence/sequence.yaml'
     'study/study.yaml'
+    'log/log.yaml'
+    'quote/quote.yaml'
 ]
 
 # The most a page of a load answers, in bytes of the host's NUON text.

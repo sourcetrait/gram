@@ -45,10 +45,11 @@ after a compaction.
 
 GramBoot's repo boot comes first, `any`'s `sequence/sequence.yaml` and
 `protocol/protocol.yaml`, then the top iter's `iter.yaml`, then for the top
-iter and, where one is named, its subiter, BOOT_FILES in GramBoot's order:
-the three states, the log's index, the understanding's, the five pools, and
-the protocol, quote, sequence, and study indices, each iter keeping every
-one of them, `[]` where it is empty. Last comes the leaf iter's
+iter and, where one is named, its subiter, BOOT_FILES in GramBoot's order,
+which ranks them by importance: the three states, the sequence and protocol
+indices, the understanding's, the five pools, the study index, the log's,
+and the quote index, each iter keeping every one of them, `[]` where it is
+empty. Last comes the leaf iter's
 `bootstrap.md`, GramBoot's third step: the subiter's where one is named,
 else the top iter's. A missing file is refused, every one named, since
 GramBoot holds those paths guaranteed. `none` is the repo boot alone and
