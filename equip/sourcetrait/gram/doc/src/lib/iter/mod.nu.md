@@ -32,9 +32,9 @@ directory, and every file written, the top iter's `iter.yaml` first.
 
 ## load
 
-An iter's boot in one call: every YAML file GramBoot reads for it, in
-GramBoot's order, each as a `FILE: <path>` line and the file's text, the
-path from the repository's root, `./iter/foo/plan/agenda.yaml`. The
+An iter's boot in one call: every file GramBoot reads for it, in GramBoot's
+order, each as a `FILE: <path>` line and the file's text, the path from the
+repository's root, `./iter/foo/plan/agenda.yaml`. The
 result is one page, `{page, remaining, content}`, pages counted from 0 and
 `remaining` the pages after this one; a page past the last is refused,
 naming how many there are. A boot calls it with page 0 and then each page
@@ -50,10 +50,11 @@ its subiter, BOOT_FILES in GramBoot's order: the three states, the log's
 index, the understanding's, the five pools, and the protocol and sequence
 indices. After them come OPTIONAL_FILES, the indices of the parts an iter
 keeps where it has them, `study/study.yaml` and `quote/quote.yaml`, each
-read where it exists. A BOOT_FILES file that is missing is refused, every
-one named, since GramBoot holds those paths guaranteed. `none` is the
-repo boot alone and `any` adds its `iter.yaml`; a special iter with a
-subiter is refused. The memory's index and the environment's are left out:
+read where it exists. Last comes the leaf iter's `bootstrap.md`, GramBoot's
+third step: the subiter's where one is named, else the top iter's. A
+BOOT_FILES file or a bootstrap that is missing is refused, every one named,
+since GramBoot holds those paths guaranteed. `none` is the repo boot alone
+and `any` adds its `iter.yaml`; a special iter with a subiter is refused. The memory's index and the environment's are left out:
 a harness loads them with its own instructions, before any boot.
 
 ## paged and payload

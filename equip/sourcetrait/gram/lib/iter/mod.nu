@@ -150,7 +150,7 @@ export def new [
     {iter: ($parts | str join '/'), path: $dir, files: $files}
 }
 
-# An iter's boot files as text in GramBoot's order, one page, each file whole.
+# An iter's boot files as text in GramBoot's order, its bootstrap last, one page.
 export def load [
     iter: string
     page: int = 0
@@ -221,7 +221,13 @@ def boot_files [
                 }
             }
         }
-        $repo_boot | append ($top_dir | path join 'iter.yaml') | append $iter_files
+        let leaf_dir = ($dirs | last)
+        (
+            $repo_boot
+            | append ($top_dir | path join 'iter.yaml')
+            | append $iter_files
+            | append ($leaf_dir | path join 'bootstrap.md')
+        )
     }
     common require_files $repo_dir $files
     $files
