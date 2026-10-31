@@ -7,6 +7,8 @@ export module log
 export use log
 export module protocol
 export use protocol
+export module quote
+export use quote
 export module sequence
 export use sequence
 export module state

@@ -162,6 +162,26 @@ export def protocol [
     if $single { $found | first } else { $found }
 }
 
+# A quote by its GramRef, or a table of them by a list of refs.
+export def quote [
+    ref: oneof<list<string>, string>
+]: [
+    nothing -> oneof<
+        record<quote: string, summary: string, file: path>,
+        table<quote: string, summary: string, file: path>
+    >
+] {
+    use ../quote
+    let single = (($ref | describe) == 'string')
+    let refs = if $single { [$ref] } else { $ref }
+    mut found = []
+    for one in $refs {
+        let named = (quote named $one (body_of $one ['quote']))
+        $found = ($found | append (quote $named.iter $named.name))
+    }
+    if $single { $found | first } else { $found }
+}
+
 # An iter's next, now, and last states by its iter ref, or a table of them.
 export def state [
     ref: oneof<list<string>, string>

@@ -236,6 +236,32 @@ export def "list protocol" [
     model protocol (ref braced $given)
 }
 
+# A quote by its GramRef: its name, its summary, and its file.
+export def "get quote" [
+    ref?: string
+]: [
+    nothing -> record<quote: string, summary: string, file: path>
+    string -> record<quote: string, summary: string, file: path>
+] {
+    let given = (one_given $ref $in 'ref')
+    use ../lib/model
+    use ../lib/ref
+    model quote (ref braced $given)
+}
+
+# Quotes by their GramRefs, a table in the order asked.
+export def "list quote" [
+    refs?: list<string>
+]: [
+    nothing -> table<quote: string, summary: string, file: path>
+    list<string> -> table<quote: string, summary: string, file: path>
+] {
+    let given = (one_given $refs $in 'refs')
+    use ../lib/model
+    use ../lib/ref
+    model quote (ref braced $given)
+}
+
 # An iter's next, now, and last states by its iter ref, in one record.
 export def "get state" [
     ref?: string
@@ -302,7 +328,7 @@ export def "list state" [
     model state (ref braced $given)
 }
 
-# New iters, log entries, campaigns, and tasks, each scaffolded.
+# New iters, log entries, campaigns, tasks, and quotes, each scaffolded.
 export def new []: nothing -> string {
     help gram new
 }
@@ -357,6 +383,16 @@ export def "new task" [
     plan new task $iter $task $summary
 }
 
+# A new quote in an iter's quote/: its index item and a stub titled for it.
+export def "new quote" [
+    iter: string
+    quote: string
+    summary: string
+]: nothing -> record<quote: string, summary: string, file: path> {
+    use ../lib/quote
+    quote new $iter $quote $summary
+}
+
 # An iter's GramLog.
 export def log []: nothing -> string {
     help gram log
@@ -368,6 +404,19 @@ export def "log prune" [
 ]: nothing -> record<kept: int, moved: int, shards: list<path>> {
     use ../lib/log
     log prune $iter
+}
+
+# An iter's GramQuote.
+export def quote []: nothing -> string {
+    help gram quote
+}
+
+# Every uncited top quote and its subtree moved into the iter's old/quote/.
+export def "quote prune" [
+    iter: string
+]: nothing -> record<kept: int, moved: int, quotes: list<string>> {
+    use ../lib/quote
+    quote prune $iter
 }
 
 # A GramRef's path and indexed summary, the ref braced or braceless.

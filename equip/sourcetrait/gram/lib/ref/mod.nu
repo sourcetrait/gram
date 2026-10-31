@@ -3,6 +3,7 @@ use ../iter
 use ../log
 use ../plan
 use ../protocol
+use ../quote
 use ../sequence
 use ../repo
 
@@ -130,6 +131,11 @@ def located [
         'sequence' | 'seq' => {
             let named = (iter_and_name $ref $body)
             let entry = (sequence $named.iter $named.name)
+            {path: $entry.file, summary: $entry.summary}
+        }
+        'quote' => {
+            let named = (quote named $ref $body)
+            let entry = (quote $named.iter $named.name)
             {path: $entry.file, summary: $entry.summary}
         }
         'info' => {

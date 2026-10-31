@@ -10,15 +10,16 @@ re-reads gram's code, which an overlay binds at parse time.
 A command leads with its verb. `get <kind> <ref>` reads one concrete model
 by one GramRef, a record, and `list <kind> <refs>` reads them by a list, a
 table in the order asked, the kinds `iter`, `log`, `campaign`, `task`,
-`sequence`, `protocol`, and `state`, each pair wrapping `model <kind>`.
-`new <kind>` scaffolds one: `new iter` calls `iter new`, `new log` `log
-new`, and `new campaign` and `new task` `plan new campaign` and `plan new
-task`. `ref <ref>` reads one GramRef's path and indexed summary through
-`ref resolve`, a record, and `list ref <refs>` reads them by a list, a
-table; the singular keeps the name `ref` rather than `get ref`. `log
-prune`, `state roll`, and `state fresh`, neither a get nor a new, stay
-under their kind; `state roll` calls `state advance`, `roll` being a
-builtin a library function never takes.
+`sequence`, `protocol`, `quote`, and `state`, each pair wrapping `model
+<kind>`. `new <kind>` scaffolds one: `new iter` calls `iter new`, `new log`
+`log new`, `new campaign` and `new task` `plan new campaign` and `plan new
+task`, and `new quote` `quote new`. `ref <ref>` reads one GramRef's path and
+indexed summary through `ref resolve`, a record, and `list ref <refs>`
+reads them by a list, a table; the singular keeps the name `ref` rather
+than `get ref`. `log prune`, `quote prune`, `state roll`, and `state
+fresh`, neither a get nor a new, stay under their kind; `state roll` calls
+`state advance`, `roll` being a builtin a library function never takes.
+`iter load` is the rig's alone, an agent's boot in one call.
 
 A get or a list, `ref` and `list ref` among them, takes its subject passed
 or piped, one way only: `gram get log log:foo:1` or `'log:foo:1' | gram get
@@ -38,10 +39,10 @@ A library module a wrapper's body imports is parsed inside this module's
 scope, so this module's commands bind there too: a `get <kind>` command
 takes any `get` of a field that kind names, and `get iter` in a library is
 this module's `get iter`, a parse failure on its missing argument when
-measured. A library reads such a field by its cell path, `($row).iter`. No
-command is named `get` alone, which would take every `get`, nor `list`, its
-plural; `new`, `log`, and `state` print nu's help, which lists their
-subcommands.
+measured. A library reads such a field by its cell path, `($row).iter`, and
+a quote's name as `$item.quote`. No command is named `get` alone, which
+would take every `get`, nor `list`, its plural; `new`, `log`, `quote`, and
+`state` print nu's help, which lists their subcommands.
 
 `get`, `list`, `ref`, and `state roll` take GramRefs braced or braceless,
 `gram get log log:foo/bar:32` or `gram list log [log:foo:1 log:foo:2]`, and

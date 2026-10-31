@@ -11,12 +11,41 @@ const INDICES = [
     'plan/maybe.yaml'
     'plan/roadmap.yaml'
     'protocol/protocol.yaml'
+    'quote/quote.yaml'
     'sequence/sequence.yaml'
     'study/study.yaml'
 ]
 
 # A new iter's summary in its top iter's iter.yaml, until one is written.
 const SUMMARY = 'To do'
+
+# The files GramBoot reads for each iter, in its order, by path under the iter.
+const BOOT_FILES = [
+    'state/now.yaml'
+    'state/next.yaml'
+    'state/last.yaml'
+    'log/log.yaml'
+    'info/info.yaml'
+    'plan/agenda.yaml'
+    'plan/defer.yaml'
+    'plan/roadmap.yaml'
+    'plan/debt.yaml'
+    'plan/maybe.yaml'
+    'protocol/protocol.yaml'
+    'sequence/sequence.yaml'
+]
+
+# The indices of the parts an iter keeps where it has them, read after BOOT_FILES.
+const OPTIONAL_FILES = [
+    'study/study.yaml'
+    'quote/quote.yaml'
+]
+
+# The most a page of a load answers, in bytes of the host's NUON text.
+const MAX_PAYLOAD = 50000
+
+# What a page's record and the host's envelope add to its content's NUON.
+const PAGE_OVERHEAD = 128
 
 # An iter's model: its namepath, its directory, its summary, and its nest.
 export def main [
@@ -119,6 +148,112 @@ export def new [
         | append ($dir | path join 'bootstrap.md')
     )
     {iter: ($parts | str join '/'), path: $dir, files: $files}
+}
+
+# An iter's boot files as text in GramBoot's order, one page, each file whole.
+export def load [
+    iter: string
+    page: int = 0
+]: nothing -> record<page: int, remaining: int, content: string> {
+    if $page < 0 {
+        error make --unspanned $"not a page: ($page); pages count from 0"
+    }
+    let repo_dir = (repo repo_dir)
+    let files = (boot_files $repo_dir $iter)
+    mut blocks = []
+    for file in $files {
+        let text = (open --raw ($repo_dir | path join $file) | decode utf-8)
+        let ended = if ($text | str ends-with (char nl)) { $text } else { $text + (char nl) }
+        $blocks = ($blocks | append $"FILE: ($file)(char nl)($ended)")
+    }
+    let pages = (paged $blocks)
+    let count = ($pages | length)
+    if $page >= $count {
+        error make --unspanned (
+            $"no page ($page); the load of ($iter) has ($count), counted from 0"
+        )
+    }
+    {
+        page: $page
+        remaining: ($count - $page - 1)
+        content: ($pages | skip $page | first | str join '')
+    }
+}
+
+# The files a boot of an iter reads, the memory's index first, then GramBoot's.
+def boot_files [
+    repo_dir: directory
+    iter: string
+]: nothing -> list<path> {
+    let parts = ($iter | split row --regex '[:/]')
+    if ($parts | any {|part| not ($part =~ '^[A-Za-z0-9_-]+$') }) {
+        error make --unspanned $"not an iter namepath: '($iter)'"
+    }
+    let top = ($parts | first)
+    if ($top in ['none' 'any']) and (($parts | length) > 1) {
+        error make --unspanned $"($top) is a special iter, with no subiters"
+    }
+    let any_dir = (['.' 'iter' 'any'] | path join)
+    let repo_boot = [
+        (['.' 'mem' 'mem.yaml'] | path join)
+        ($any_dir | path join 'sequence' 'sequence.yaml')
+        ($any_dir | path join 'protocol' 'protocol.yaml')
+    ]
+    let files = if $top == 'none' {
+        $repo_boot
+    } else if $top == 'any' {
+        $repo_boot | append ($any_dir | path join 'iter.yaml')
+    } else {
+        let top_dir = (common repo_dir_iter $repo_dir $top)
+        let dirs = if ($parts | length) == 1 {
+            [$top_dir]
+        } else {
+            [$top_dir (common repo_dir_iter $repo_dir $iter)]
+        }
+        mut iter_files = []
+        for dir in $dirs {
+            for file in $BOOT_FILES {
+                $iter_files = ($iter_files | append ($dir | path join $file))
+            }
+            for file in $OPTIONAL_FILES {
+                let held = ($dir | path join $file)
+                if ($repo_dir | path join $held | path exists) {
+                    $iter_files = ($iter_files | append $held)
+                }
+            }
+        }
+        $repo_boot | append ($top_dir | path join 'iter.yaml') | append $iter_files
+    }
+    common require_files $repo_dir $files
+    $files
+}
+
+# File blocks packed into pages in order, each within MAX_PAYLOAD, none split.
+def paged [
+    blocks: list<string>
+]: nothing -> list<list<string>> {
+    mut pages = []
+    mut current = []
+    for block in $blocks {
+        let grown = ($current | append $block)
+        if ($current | is-not-empty) and ((payload $grown) > $MAX_PAYLOAD) {
+            $pages = ($pages | append [$current])
+            $current = [$block]
+        } else {
+            $current = $grown
+        }
+    }
+    if ($current | is-not-empty) {
+        $pages = ($pages | append [$current])
+    }
+    $pages
+}
+
+# A page's size as the host answers it: its content as NUON, with the overhead.
+def payload [
+    blocks: list<string>
+]: nothing -> int {
+    ($blocks | str join '' | to nuon | str length --utf-8-bytes) + $PAGE_OVERHEAD
 }
 
 # A top iter's iter.yaml as written, refused missing, reformatted, or listing the sub.

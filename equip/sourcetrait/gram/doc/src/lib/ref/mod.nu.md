@@ -41,8 +41,8 @@ way wherever it is read.
 
 A GramRef is `{kind:body}`. `none`, GramRef's null, names no file and has
 no summary, and neither has a `url` or any other kind outside those held. The
-kinds held: `log`, `protocol`, `sequence`, `mem`, `info`, `study`, `plan`,
-`file`, and `iter`, with `proto` and `seq` read as `protocol` and
+kinds held: `log`, `protocol`, `sequence`, `quote`, `mem`, `info`, `study`,
+`plan`, `file`, and `iter`, with `proto` and `seq` read as `protocol` and
 `sequence`, the short names older refs carry. An iter ref is read through
 `iter`, its model's directory and summary. A log, protocol, or sequence ref
 resolves through the log, protocol, and sequence modules, so each index's
@@ -71,6 +71,12 @@ concept's under the iter's `study/` and the study's namepath. A ref missing
 its iter, its study, or its concept is refused. Its summary is its concept
 entry's in the study's own `info.yaml`, which lists every concept of the
 study, so a concept it lacks is refused.
+
+A quote ref names a quote of an iter's, `{quote:foo/bar:Name/Sub}`, split
+by `quote named`, the iter its leading lowercase parts and the quote the
+first part opening in a capital, then read through `quote`: its file and
+its summary from the iter's `quote/quote.yaml`, or from
+`old/quote/quote.yaml` once it is pruned, so a prune changes no reference.
 
 A memory ref names a concept of the memory tree by its path under `mem/`,
 `{mem:Topic}` or `{mem:Topic/Sub}`, CamelCase parts joined by `/`. A
