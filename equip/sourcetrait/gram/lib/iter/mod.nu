@@ -180,7 +180,7 @@ export def load [
     }
 }
 
-# The files a boot of an iter reads, the memory's index first, then GramBoot's.
+# The files a boot of an iter reads, in GramBoot's order.
 def boot_files [
     repo_dir: directory
     iter: string
@@ -195,7 +195,6 @@ def boot_files [
     }
     let any_dir = (['.' 'iter' 'any'] | path join)
     let repo_boot = [
-        (['.' 'mem' 'mem.yaml'] | path join)
         ($any_dir | path join 'sequence' 'sequence.yaml')
         ($any_dir | path join 'protocol' 'protocol.yaml')
     ]
