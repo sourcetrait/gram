@@ -32,13 +32,9 @@ const BOOT_FILES = [
     'plan/debt.yaml'
     'plan/maybe.yaml'
     'protocol/protocol.yaml'
-    'sequence/sequence.yaml'
-]
-
-# The indices of the parts an iter keeps where it has them, read after BOOT_FILES.
-const OPTIONAL_FILES = [
-    'study/study.yaml'
     'quote/quote.yaml'
+    'sequence/sequence.yaml'
+    'study/study.yaml'
 ]
 
 # The most a page of a load answers, in bytes of the host's NUON text.
@@ -213,12 +209,6 @@ def boot_files [
         for dir in $dirs {
             for file in $BOOT_FILES {
                 $iter_files = ($iter_files | append ($dir | path join $file))
-            }
-            for file in $OPTIONAL_FILES {
-                let held = ($dir | path join $file)
-                if ($repo_dir | path join $held | path exists) {
-                    $iter_files = ($iter_files | append $held)
-                }
             }
         }
         let leaf_dir = ($dirs | last)

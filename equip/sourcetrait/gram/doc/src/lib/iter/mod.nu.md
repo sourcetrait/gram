@@ -45,17 +45,16 @@ after a compaction.
 
 GramBoot's repo boot comes first, `any`'s `sequence/sequence.yaml` and
 `protocol/protocol.yaml`, then the top iter's `iter.yaml`, then for the top
-iter and, where one is named,
-its subiter, BOOT_FILES in GramBoot's order: the three states, the log's
-index, the understanding's, the five pools, and the protocol and sequence
-indices. After them come OPTIONAL_FILES, the indices of the parts an iter
-keeps where it has them, `study/study.yaml` and `quote/quote.yaml`, each
-read where it exists. Last comes the leaf iter's `bootstrap.md`, GramBoot's
-third step: the subiter's where one is named, else the top iter's. A
-BOOT_FILES file or a bootstrap that is missing is refused, every one named,
-since GramBoot holds those paths guaranteed. `none` is the repo boot alone
-and `any` adds its `iter.yaml`; a special iter with a subiter is refused. The memory's index and the environment's are left out:
-a harness loads them with its own instructions, before any boot.
+iter and, where one is named, its subiter, BOOT_FILES in GramBoot's order:
+the three states, the log's index, the understanding's, the five pools, and
+the protocol, quote, sequence, and study indices, each iter keeping every
+one of them, `[]` where it is empty. Last comes the leaf iter's
+`bootstrap.md`, GramBoot's third step: the subiter's where one is named,
+else the top iter's. A missing file is refused, every one named, since
+GramBoot holds those paths guaranteed. `none` is the repo boot alone and
+`any` adds its `iter.yaml`; a special iter with a subiter is refused. The
+memory's index and the environment's are left out: a harness loads them
+with its own instructions, before any boot.
 
 ## paged and payload
 
